@@ -1,0 +1,42 @@
+## Questionaire:
+What is the difference between var and let?
+a var is mutable, can contain different values in its lifespan.  And a let is inmutable, has one value assigned to it and cannot be changed one assigned.
+
+What is an optional?
+the optional operator (?) allows a let or var to be unassigned upon its declaration.  If no value is assigned when the memory value is declared then a nil value is assigned.  
+although a let can only have one value in its life span if it it is declared an optional and no value is assigned upon its declaration the nil value is tempraraly assigned to it
+until the time a value IS assigned.  A var can be declared un assigned and hold a nil value and then take a new value but it can also be returned to the nil value.
+
+What is optional chaining vs optional binding?
+they both test a declared optional value, in optional chaining we use the use (?) in place of the forse unwrap (!) and then provide the options for if it is nil or if it is assigned.
+preventing error if the value is nil.  Optional binding uses if else control flow to test a value by asigning it to a let if the operation is permisable then the action is performed 
+otherwise you can report an error.  Optional Binding can be used to test type incompatability as well as nil value. 
+
+What are the different ways to unwrap an optional? How do they work? Are they safe?
+Well you have forced unwraping using (!) to for the action to be performed whether of not the correct value is being used.  This is unsafe beause if you are performing it using a 
+nil value or an incorrect value then it will cause an error.  You can use an if else to explicitly test for the correct value, while force unwraping.  But the prefered way is to
+use optional binding or optional chaining.
+
+What is a closure?
+a closure is a block of code that can be called later.  basicaly a function is a type of closure.  Anything that is enclosed in a {} pair is a closure.  A closure can 
+have a name or not and it can have a input parameters or not, it must have () if no parameters are used, and it can also have outputs or not.
+
+What is the difference between a class and a struct?
+Well for one classes have reference values where as structs have data vlues.  that means when you make a copy in a class you are just adding another pointer to it where as
+in a struct you are actualy making a seperate data copy.  Also classes have thae ability to build up using inheratence, where as structs cannot inherit from each other
+
+What is the syntax '??' do?
+it is a optional ternary conditional operator and forced unwraps an optionalto access the value wrapped inside a when a is not nil, and to return b otherwise.
+
+What is a tuple?
+a tuple is a colection data values of different types, almost like a record: Name, DOB, address, Phone Number, etc.
+
+What is Any vs AnyObject?
+they are both nonspecific data types, if you are not sure what the data type you can use Any, AnyObject but anyobject is specificaly for class types.
+ 
+What is a protocol?
+is used to specify particular class type property or instance property. It just specifies the type or instance property alone rather than specifying whether it is a stored or 
+computed property. Also, it is used to specify whether the property is 'gettable' or 'settable'.
+
+What is Delegation?
+Delegation is a design pattern that enables a class or structure to hand off (or delegate) some of its responsibilities to an instance of another type.
