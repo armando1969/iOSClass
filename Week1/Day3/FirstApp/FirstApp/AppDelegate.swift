@@ -2,13 +2,8 @@
 //  AppDelegate.swift
 //  FirstApp
 //
-//  Created by Consultant on 1/24/22.
+//  Created by Consultant on 1/25/22.
 //
-//Design patterns
-//MVC Model View Controller
-//MVP Model View presenter
-//MVVM Model View ViewModel
-//Viper - clean architecture
 
 import UIKit
 

@@ -1,24 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="FirstApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Application" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ejc-rB-LDv">
+                                <rect key="frame" x="146.5" y="54" width="121.5" height="20"/>
+                                <fontDescription key="fontDescription" name="TimesNewRomanPSMT" family="Times New Roman" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tyi-4A-uvg">
+                                <rect key="frame" x="93" y="159" width="246" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Age" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BOM-d5-wIu">
+                                <rect key="frame" x="30" y="166" width="30" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8mt-W0-Xcv">
+                                <rect key="frame" x="273.5" y="209" width="65.5" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Merge"/>
+                                <connections>
+                                    <action selector="mergeButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="IZj-jJ-9eE"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Jz-W2-v4S">
+                                <rect key="frame" x="93" y="283" width="246" height="35"/>
+                                <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="vwe-OK-5Yr"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qgk-Ic-tC7">
+                                <rect key="frame" x="30" y="114" width="45" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="V0a-a3-Ro0">
+                                <rect key="frame" x="93" y="107.5" width="246" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Qgk-Ic-tC7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="30" id="08k-2p-B64"/>
+                            <constraint firstItem="5Jz-W2-v4S" firstAttribute="leading" secondItem="Tyi-4A-uvg" secondAttribute="leading" id="13a-h7-QOx"/>
+                            <constraint firstItem="8mt-W0-Xcv" firstAttribute="top" secondItem="Tyi-4A-uvg" secondAttribute="bottom" constant="16" id="2go-aZ-ywJ"/>
+                            <constraint firstItem="V0a-a3-Ro0" firstAttribute="leading" secondItem="Qgk-Ic-tC7" secondAttribute="trailing" constant="18" id="3h0-ML-Y5r"/>
+                            <constraint firstItem="ejc-rB-LDv" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="6de-oL-SAS"/>
+                            <constraint firstItem="5Jz-W2-v4S" firstAttribute="top" secondItem="Tyi-4A-uvg" secondAttribute="bottom" constant="90" id="9QH-mg-fiW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="8mt-W0-Xcv" secondAttribute="trailing" constant="75" id="Aia-Eb-ded"/>
+                            <constraint firstItem="5Jz-W2-v4S" firstAttribute="trailing" secondItem="8mt-W0-Xcv" secondAttribute="trailing" id="EOB-8q-xVF"/>
+                            <constraint firstItem="Qgk-Ic-tC7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="70" id="Fn1-aP-fkx"/>
+                            <constraint firstItem="8mt-W0-Xcv" firstAttribute="trailing" secondItem="Tyi-4A-uvg" secondAttribute="trailing" id="Fow-ZS-Naw"/>
+                            <constraint firstItem="BOM-d5-wIu" firstAttribute="centerY" secondItem="Tyi-4A-uvg" secondAttribute="centerY" id="GX4-EG-drj"/>
+                            <constraint firstItem="Tyi-4A-uvg" firstAttribute="trailing" secondItem="V0a-a3-Ro0" secondAttribute="trailing" id="H0P-G3-aJO"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="V0a-a3-Ro0" secondAttribute="trailing" constant="75" id="Hdo-T8-L4Z"/>
+                            <constraint firstItem="ejc-rB-LDv" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="JYJ-UI-ISc"/>
+                            <constraint firstItem="Tyi-4A-uvg" firstAttribute="leading" secondItem="V0a-a3-Ro0" secondAttribute="leading" id="NAM-i2-zEa"/>
+                            <constraint firstItem="BOM-d5-wIu" firstAttribute="leading" secondItem="Qgk-Ic-tC7" secondAttribute="leading" id="RZY-rN-Ib2"/>
+                            <constraint firstItem="Tyi-4A-uvg" firstAttribute="top" secondItem="V0a-a3-Ro0" secondAttribute="bottom" constant="17.5" id="XDl-FQ-g3f"/>
+                            <constraint firstItem="V0a-a3-Ro0" firstAttribute="centerY" secondItem="Qgk-Ic-tC7" secondAttribute="centerY" id="hZT-kD-iwK"/>
+                            <constraint firstItem="5Jz-W2-v4S" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="93" id="ief-wT-0KU"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="UILabel1" destination="ejc-rB-LDv" id="dh7-N7-YwB"/>
+                        <outlet property="ageTextBox" destination="Tyi-4A-uvg" id="7ck-hO-zjH"/>
+                        <outlet property="mergeLabel" destination="5Jz-W2-v4S" id="qHg-m7-gOg"/>
+                        <outlet property="nameTextBox" destination="V0a-a3-Ro0" id="gbb-OJ-7Pb"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-1846" y="-180"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
