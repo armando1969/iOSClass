@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Main View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="SegmentControl" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Segment Controller" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RB3-tv-jGe">
+                                <rect key="frame" x="133" y="54" width="148" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="gma-H1-zgN"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="byB-I2-QZ2">
+                                <rect key="frame" x="20" y="104" width="374" height="32"/>
+                                <segments>
+                                    <segment title="First"/>
+                                    <segment title="Second"/>
+                                    <segment title="Third"/>
+                                </segments>
+                                <connections>
+                                    <action selector="SermentControl:" destination="BYZ-38-t0r" eventType="valueChanged" id="FEn-Dx-7u9"/>
+                                </connections>
+                            </segmentedControl>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" tag="1" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="s-l300.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="Rlf-kL-tRI">
+                                <rect key="frame" x="20" y="169" width="374" height="225"/>
+                                <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
+                                <color key="tintColor" systemColor="systemBlueColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="225" id="cTs-3o-gOn"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="RB3-tv-jGe" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="6PP-z2-0RJ"/>
+                            <constraint firstItem="Rlf-kL-tRI" firstAttribute="trailing" secondItem="byB-I2-QZ2" secondAttribute="trailing" id="C7A-h5-mNm"/>
+                            <constraint firstItem="Rlf-kL-tRI" firstAttribute="top" secondItem="byB-I2-QZ2" secondAttribute="bottom" constant="34" id="COM-Ul-lUR"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="byB-I2-QZ2" secondAttribute="trailing" constant="20" id="EH0-SY-Ijq"/>
+                            <constraint firstItem="RB3-tv-jGe" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="Rby-dH-Lza"/>
+                            <constraint firstItem="byB-I2-QZ2" firstAttribute="top" secondItem="RB3-tv-jGe" secondAttribute="bottom" constant="20" id="gwm-AA-ffO"/>
+                            <constraint firstItem="Rlf-kL-tRI" firstAttribute="leading" secondItem="byB-I2-QZ2" secondAttribute="leading" id="tdh-f6-Dje"/>
+                            <constraint firstItem="byB-I2-QZ2" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="uCG-bK-pUf"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="SegmentControlAttributes" destination="byB-I2-QZ2" id="2Cr-ax-6gD"/>
+                        <outlet property="imageView" destination="Rlf-kL-tRI" id="EA9-uC-RdF"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-396" y="-18"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="s-l300.jpg" width="300" height="225"/>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
