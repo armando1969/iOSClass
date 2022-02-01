@@ -59,10 +59,13 @@
                             <constraint firstItem="lkr-jq-Xov" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="i19-W9-Zuv"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="tableView" destination="lkr-jq-Xov" id="HjK-U2-Buh"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="18.840579710144929" y="83.705357142857139"/>
+            <point key="canvasLocation" x="-335" y="95"/>
         </scene>
     </scenes>
     <resources>
