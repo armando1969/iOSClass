@@ -8,22 +8,22 @@
 import UIKit
 
 protocol CellStatusProtocol {
-    func SendingCellStatustoTableView(cellStatus: String)
+    func SendingCellStatustoTableView(cellStatus: Bool, row: Int)
 }
 
 class DetailViewController: UIViewController {
     var delegate: CellStatusProtocol? = nil
     
     var image: String?
+    var row: Int?
 
     @IBAction func DetailSwitch(_ sender: Any) {
         if ((sender as AnyObject).isOn == true) {
-            if self.delegate != nil {
-                self.delegate?.SendingCellStatustoTableView(cellStatus: "Status: true")
-            }
+                print(row!)
+                self.delegate?.SendingCellStatustoTableView(cellStatus: true, row: row!)
         } else {
             if self.delegate != nil {
-                self.delegate?.SendingCellStatustoTableView(cellStatus: "Status: false")
+                self.delegate?.SendingCellStatustoTableView(cellStatus: false, row: row!)
             }
         }
         
@@ -32,7 +32,6 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var DetailImage: UIImageView!
     
     override func viewDidLoad() {
-        
         loadImage()
         
     }

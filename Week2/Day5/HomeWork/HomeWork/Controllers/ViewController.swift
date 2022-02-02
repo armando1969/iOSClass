@@ -16,9 +16,8 @@ class ViewController: UIViewController, CellStatusProtocol {
     
     private var array = [NasaPhotos]()
     var image: String?
-    var status: String = "status: False"
-    
-    
+    var status: [Bool]?
+    var selectedRow: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +35,7 @@ class ViewController: UIViewController, CellStatusProtocol {
              switch result {
              case .success(let response):
                  self?.array = response.photos
+                 self?.status = Array(repeating: false, count: (self?.array.count)!)
              case .failure(let error):
                  print(error.localizedDescription)
              }
@@ -60,7 +60,11 @@ extension ViewController: UITableViewDataSource {
         
         if let cell = TableView.dequeueReusableCell(withIdentifier: "customCell", for: indexPath) as? UITableViewCell {
             cell.textLabel?.text = "Id: \(title)"
-            cell.detailTextLabel?.text = status
+            if status?[indexPath.row] == true {
+                cell.detailTextLabel?.text = "Status: true"
+            } else {
+                cell.detailTextLabel?.text = "Status: false"
+            }
             return cell
         }
     }
@@ -68,11 +72,23 @@ extension ViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         image = array[indexPath.row].img_src
+        selectedRow = indexPath.row
         performSegue(withIdentifier: "ShowDetail", sender: nil)
     }
     
-    func SendingCellStatustoTableView(cellStatus: String) {
-        self.status = cellStatus
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let detailViewController = segue.destination as? DetailViewController {
+            detailViewController.row = selectedRow
+            detailViewController.image = image!
+            detailViewController.delegate = self
+        }
+    }
+    
+    func SendingCellStatustoTableView(cellStatus: Bool, row: Int) {
+        print(row)
+        self.status?[row] = cellStatus
+        TableView.reloadData()
     }
     
 }
@@ -83,16 +99,6 @@ extension ViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        print(array.count)
-        print(image!)
-        
-                if let detailViewController = segue.destination as? DetailViewController {
-                    detailViewController.image = image!
-                }
     }
     
 }
