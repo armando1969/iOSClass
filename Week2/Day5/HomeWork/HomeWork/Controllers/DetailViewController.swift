@@ -17,6 +17,8 @@ class DetailViewController: UIViewController {
     var image: String?
     var row: Int?
 
+    @IBOutlet weak var SwitchState: UISwitch!
+    
     @IBAction func DetailSwitch(_ sender: Any) {
         if ((sender as AnyObject).isOn == true) {
                 print(row!)
@@ -32,6 +34,7 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var DetailImage: UIImageView!
     
     override func viewDidLoad() {
+        SwitchState.isOn = false
         loadImage()
         
     }

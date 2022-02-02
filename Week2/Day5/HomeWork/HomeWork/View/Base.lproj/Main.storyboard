@@ -119,6 +119,7 @@
                     <navigationItem key="navigationItem" title="Detail View" id="lRT-xz-T04"/>
                     <connections>
                         <outlet property="DetailImage" destination="jYu-Aw-05a" id="dtX-ch-8fn"/>
+                        <outlet property="SwitchState" destination="oak-91-jkM" id="N1j-9R-n2E"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9M7-Qd-Qex" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
