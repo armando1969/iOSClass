@@ -15,6 +15,7 @@ class DetailViewController: UIViewController {
     var delegate: CellStatusProtocol? = nil
     
     var image: String?
+    var status: Bool?
     var row: Int?
 
     @IBOutlet weak var SwitchState: UISwitch!
@@ -34,7 +35,12 @@ class DetailViewController: UIViewController {
     @IBOutlet weak var DetailImage: UIImageView!
     
     override func viewDidLoad() {
-        SwitchState.isOn = false
+        if status == true {
+            SwitchState.isOn = true
+        } else {
+            SwitchState.isOn = false
+        }
+        self.delegate?.SendingCellStatustoTableView(cellStatus: false, row: row!)
         loadImage()
         
     }

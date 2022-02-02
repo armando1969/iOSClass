@@ -81,6 +81,7 @@ extension ViewController: UITableViewDataSource {
         if let detailViewController = segue.destination as? DetailViewController {
             detailViewController.row = selectedRow
             detailViewController.image = image!
+            detailViewController.status = status?[selectedRow!]
             detailViewController.delegate = self
         }
     }
