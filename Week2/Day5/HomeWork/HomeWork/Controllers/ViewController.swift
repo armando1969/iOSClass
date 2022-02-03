@@ -12,7 +12,7 @@ class ViewController: UIViewController, CellStatusProtocol {
     
     private let networkManager = NetworkManager()
 
-    @IBOutlet weak var TableView: UITableView!
+    @IBOutlet private weak var TableView: UITableView!
     
     private var array = [NasaPhotos]()
     var image: String?

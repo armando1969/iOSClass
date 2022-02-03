@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CellStatusProtocol {
-    func SendingCellStatustoTableView(cellStatus: Bool, row: Int)
+    func sendingCellStatustoTableView(cellStatus: Bool, row: Int)
 }
 
 class DetailViewController: UIViewController {
@@ -18,15 +18,15 @@ class DetailViewController: UIViewController {
     var status: Bool?
     var row: Int?
 
-    @IBOutlet weak var SwitchState: UISwitch!
+    @IBOutlet private weak var SwitchState: UISwitch!
     
-    @IBAction func DetailSwitch(_ sender: Any) {
+    @IBAction private func DetailSwitch(_ sender: Any) {
         if ((sender as AnyObject).isOn == true) {
                 print(row!)
-                self.delegate?.SendingCellStatustoTableView(cellStatus: true, row: row!)
+                self.delegate?.sendingCellStatustoTableView(cellStatus: true, row: row!)
         } else {
             if self.delegate != nil {
-                self.delegate?.SendingCellStatustoTableView(cellStatus: false, row: row!)
+                self.delegate?.sendingCellStatustoTableView(cellStatus: false, row: row!)
             }
         }
         
@@ -40,7 +40,7 @@ class DetailViewController: UIViewController {
         } else {
             SwitchState.isOn = false
         }
-        self.delegate?.SendingCellStatustoTableView(cellStatus: false, row: row!)
+        self.delegate?.sendingCellStatustoTableView(cellStatus: false, row: row!)
         loadImage()
         
     }
