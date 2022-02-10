@@ -58,8 +58,7 @@ class ViewController: UIViewController {
         postNetwork.get(from: NetworkURLs.baseURLReddit) { result in
             switch result {
             case .success(let response):
-                //let firstPost = response.first
-                print(response.data.children.first)
+                print(response.data.children.first?.data.title)
             case .failure(let error):
                 print(error.localizedDescription)
             }
