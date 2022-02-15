@@ -1,8 +1,8 @@
 //
 //  AppDelegate.swift
-//  RedditChange
+//  RedditChallenge
 //
-//  Created by Consultant on 2/4/22.
+//  Created by Consultant on 2/12/22.
 //
 
 import UIKit

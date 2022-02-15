@@ -8,7 +8,7 @@
 import Foundation
 
 
-let trickNamePublisher = NotificationCenter.default.publisher(for: .newTrickDownloader)
+//let trickNamePublisher = NotificationCenter.default.publisher(for: .newTrickDownloader)
 //let trickNamePublisher = NotificationCenter.default.publisher(for: .newTrickDownloaded) .map { notification in
 //    return notification.userInfo?["data"] as! Data
 //}
