@@ -9,14 +9,7 @@ import UIKit
 
 class MainViewController: UIViewController {
     
-    
-    @IBOutlet private weak var SegmentControlAttributes: UISegmentedControl!
-    
-    @IBOutlet private weak var imageView: UIImageView!
-    
-    @IBAction private func SermentControl(_ sender: Any) {
-        
-      private  enum coin: Int {
+    private enum coin: Int {
         case Guanajuato
         case Durango
         case Mexico
@@ -32,6 +25,12 @@ class MainViewController: UIViewController {
                 }
             }
         }
+    
+    @IBOutlet private weak var SegmentControlAttributes: UISegmentedControl!
+    
+    @IBOutlet private weak var imageView: UIImageView!
+    
+    @IBAction private func SermentControl(_ sender: Any) {
         
         let index = SegmentControlAttributes.selectedSegmentIndex
         
@@ -40,14 +39,14 @@ class MainViewController: UIViewController {
         }
       
         imageView.image = segmentCase.image
-     /*   switch segmentCase {
+        switch segmentCase {
         case .Guanajuato:
             imageView.image = UIImage(named: "Guanajuato")
         case .Durango:
             imageView.image = UIImage(named: "Durango")
         case .Mexico:
             imageView.image = UIImage(named: "Mexico")
-        } */
+        } 
     }
     override func viewDidLoad() {
         super.viewDidLoad()

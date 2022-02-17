@@ -1,8 +1,8 @@
 //
 //  MovieCell.swift
-//  HomeWork #2
+//  HomeWork3
 //
-//  Created by Consultant on 2/12/22.
+//  Created by Consultant on 2/17/22.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ class MovieCell: UITableViewCell {
     
     static let identifier = "MovieCell"
     
-    private lazy var verticalStackView: UIStackView = {
+    private lazy var verticalStackView1: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -32,6 +32,7 @@ class MovieCell: UITableViewCell {
     private lazy var movieImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.backgroundColor = .lightGray
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -39,8 +40,8 @@ class MovieCell: UITableViewCell {
     private lazy var originalTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 18)
-        label.numberOfLines = 0
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.numberOfLines = 1
         label.textAlignment = .left
         return label
     }()
@@ -49,7 +50,7 @@ class MovieCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Arial", size: 13)
-        label.numberOfLines = 0
+        label.numberOfLines = 4
         label.textAlignment = .left
         return label
     }()
@@ -63,28 +64,34 @@ class MovieCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(title: String, overview: String) {
+    func configureCell(title: String, overview: String, imageData: Data?) {
         originalTitleLabel.text = title
         overviewLabel.text = overview
+        if let imageData = imageData {
+            let image = UIImage(data: imageData)
+            movieImageView.image = image
+        }
     }
     
     private func setUpUI() {
-        verticalStackView.addArrangedSubview(originalTitleLabel)
-        verticalStackView.addArrangedSubview(overviewLabel)
+        verticalStackView1.addArrangedSubview(originalTitleLabel)
+        verticalStackView1.addArrangedSubview(overviewLabel)
         
         horizontalStackView.addArrangedSubview(movieImageView)
-        horizontalStackView.addArrangedSubview(verticalStackView)
+        horizontalStackView.addArrangedSubview(verticalStackView1)
         
-        contentView.addSubview(verticalStackView)
+        contentView.addSubview(horizontalStackView)
         
         //the stack constraints
         let safeArea = contentView.safeAreaLayoutGuide
-        verticalStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-        verticalStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-        verticalStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-        verticalStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+        horizontalStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+        horizontalStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
+        horizontalStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+        horizontalStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+        verticalStackView1.spacing = 5
+        horizontalStackView.spacing = 10
         
-        movieImageView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-        movieImageView.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        movieImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        movieImageView.widthAnchor.constraint(equalToConstant: 70).isActive = true
     }
 }

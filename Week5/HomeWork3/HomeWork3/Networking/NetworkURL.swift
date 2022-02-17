@@ -1,11 +1,9 @@
 //
 //  NetworkURL.swift
-//  HomeWork #2
+//  HomeWork3
 //
-//  Created by Consultant on 2/13/22.
+//  Created by Consultant on 2/17/22.
 //
-
-import Foundation
 
 enum NetworkURL {
     

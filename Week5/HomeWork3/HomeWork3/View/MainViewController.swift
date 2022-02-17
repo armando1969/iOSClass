@@ -1,21 +1,29 @@
 //
-//  ViewController.swift
-//  HomeWork #2
+//  MainViewController.swift
+//  HomeWork3
 //
-//  Created by Consultant on 2/12/22.
+//  Created by Consultant on 2/17/22.
 //
 
 import UIKit
 import Combine
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     
     private let viewModel = ViewModel()
     private var cancellables = Set<AnyCancellable>()
     private let segments = ["Movies", "Favorites"]
+    internal var customer = ""
     
     private lazy var segmentControl: UISegmentedControl = {
         let segments = UISegmentedControl(items: segments)
+        segments.selectedSegmentIndex = 0
+        segments.layer.cornerRadius = 9
+        segments.layer.borderWidth = 1
+        segments.layer.masksToBounds = true
+        segments.layer.borderColor = UIColor.blue.cgColor
+        segments.tintColor = UIColor.blue
+        segments.addTarget(self, action: #selector(switchSegment(_:)), for: .valueChanged)
         segments.translatesAutoresizingMaskIntoConstraints = false
         return segments
     }()
@@ -24,7 +32,6 @@ class ViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
       //  tableView.prefetchDataSource = self
-        tableView.dataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         return tableView
     }()
@@ -33,6 +40,15 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        navigationItem.hidesBackButton = true
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Hello: \(customer)",
+                                                           style: UIBarButtonItem.Style.plain,
+                                                               target: nil,
+                                                               action: nil)
+        navigationItem.rightBarButtonItem = self.editButtonItem
+        tableView.dataSource = self
+        tableView.delegate = self
         SetupUI()
         Binding()
     }
@@ -43,16 +59,13 @@ class ViewController: UIViewController {
         
         view.addSubview(tableView)
         
-        //create the constrains
+        //create the tableview constrains
         let safeArea = view.safeAreaLayoutGuide
-        tableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20).isActive = true
+        tableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
         tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant:  20).isActive = true
         tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant:  -20).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
-//        segmentControl.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-//        segmentControl.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-//        segmentControl.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-//        segmentControl.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+        
     }
 
     func Binding() {
@@ -66,10 +79,21 @@ class ViewController: UIViewController {
         
         viewModel.getMovies()
     }
+    
+    @objc private func switchSegment(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            view.backgroundColor = .blue
+        case 1:
+            view.backgroundColor = .black
+        default:
+            return
+        }
+    }
 
 }
 
-extension ViewController: UITableViewDataSource {
+extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.movies.count
     }
@@ -80,8 +104,26 @@ extension ViewController: UITableViewDataSource {
             return UITableViewCell() }
         let title = viewModel.getTitle(by: indexPath.row)
         let overview = viewModel.getOverview(by: indexPath.row)
-        cell.configureCell(title: title, overview: overview)
+        let image = viewModel.getImageData(by: indexPath.row)
+        cell.configureCell(title: title, overview: overview, imageData: image)
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let detail = DetailViewController()
+        detail.originalTitle = viewModel.getTitle(by: indexPath.row)
+        detail.overView = viewModel.getOverview(by: indexPath.row)
+        detail.image = viewModel.getImageData(by: indexPath.row)!
+        navigationController?.pushViewController(detail, animated: true)
+        
+    }
+}
+
+extension MainViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableView.automaticDimension
     }
 }
 

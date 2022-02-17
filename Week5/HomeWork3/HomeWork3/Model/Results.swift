@@ -1,8 +1,8 @@
 //
 //  Results.swift
-//  HomeWork #2
+//  HomeWork3
 //
-//  Created by Consultant on 2/14/22.
+//  Created by Consultant on 2/17/22.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ struct Results: Codable {
     let backdropPath: String
     let genreIDS: [Int]
     let id: Int
-    let originalLanguage: OriginalLanguage
+    //let originalLanguage: OriginalLanguage
     let originalTitle, overview: String
     let popularity: Double
     let posterPath, releaseDate, title: String
@@ -25,7 +25,7 @@ struct Results: Codable {
         case backdropPath = "backdrop_path"
         case genreIDS = "genre_ids"
         case id
-        case originalLanguage = "original_language"
+       // case originalLanguage = "original_language"
         case originalTitle = "original_title"
         case overview, popularity
         case posterPath = "poster_path"
@@ -35,9 +35,9 @@ struct Results: Codable {
         case voteCount = "vote_count"
     }
     
-    enum OriginalLanguage: String, Codable {
-        case en = "en"
-        case es = "es"
-        case ja = "ja"
-    }
+//    enum OriginalLanguage: String, Codable {
+//        case en = "en"
+//        case es = "es"
+//        case ja = "ja"
+//    }
 }
