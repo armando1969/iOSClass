@@ -25,6 +25,7 @@ class SignInViewController: UIViewController {
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .leading
+        stackView.spacing = 5
         return stackView
     }()
     
@@ -43,8 +44,6 @@ class SignInViewController: UIViewController {
         userTextField.attributedPlaceholder = NSAttributedString(
             string: "write your name here",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.opaqueSeparator])
-     //   userTextField.placeholder = "write your name here"
-     //   userTextField.placeholder?.description.
         userTextField.textColor = .black
         userTextField.borderStyle = UITextField.BorderStyle.roundedRect
         return userTextField
@@ -65,8 +64,6 @@ class SignInViewController: UIViewController {
         mainStackView.addArrangedSubview(stackView)
         
         view.addSubview(mainStackView)
-        
-      //  saveButton.addTarget(self, action: #selector(pressed), for: .touchUpInside)
 
         let safeArea = view.safeAreaLayoutGuide
         userTextField.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
@@ -74,7 +71,6 @@ class SignInViewController: UIViewController {
 
         stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
         stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-        mainStackView.spacing = 5
         saveButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 270).isActive = true
 
 
@@ -85,7 +81,7 @@ class SignInViewController: UIViewController {
     private func pressed() {
         guard let user = userTextField.text, user.count >= 3 else
         {
-            let invalidAlert = createAlert("The username and/or password is blank or invalid")
+            let invalidAlert = createAlert("The username is blank or invalid")
             present(invalidAlert, animated: true, completion: nil)
             return
         }

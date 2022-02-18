@@ -12,28 +12,53 @@ class MainViewController: UIViewController {
     
     private let viewModel = ViewModel()
     private var cancellables = Set<AnyCancellable>()
-    private let segments = ["Movies", "Favorites"]
-    internal var customer = ""
+    private let segments = ["Movie List", "Favorites"]
+    lazy var tableTodisplay = [Results]()
+    lazy var movieList = [Results]()
+    lazy var filteredMovies = [Results]()
+    var customer = ""
+    var seaeching = false
+    
+    
+    
+    private lazy var searchBar: UISearchBar = {
+        let search = UISearchBar()
+        search.translatesAutoresizingMaskIntoConstraints = false
+        search.barTintColor = UIColor.white
+        search.layer.cornerRadius = 9
+        search.layer.borderWidth = 1
+        return search
+    }()
     
     private lazy var segmentControl: UISegmentedControl = {
-        let segments = UISegmentedControl(items: segments)
-        segments.selectedSegmentIndex = 0
-        segments.layer.cornerRadius = 9
-        segments.layer.borderWidth = 1
-        segments.layer.masksToBounds = true
-        segments.layer.borderColor = UIColor.blue.cgColor
-        segments.tintColor = UIColor.blue
-        segments.addTarget(self, action: #selector(switchSegment(_:)), for: .valueChanged)
-        segments.translatesAutoresizingMaskIntoConstraints = false
-        return segments
+        let segment = UISegmentedControl(items: segments)
+        segment.translatesAutoresizingMaskIntoConstraints = false
+        segment.selectedSegmentIndex = 0
+        segment.layer.cornerRadius = 9
+        segment.layer.borderWidth = 1
+        segment.layer.masksToBounds = true
+     //   segments.addTarget(self, action: #selector(switchSegment(_:)), for: .valueChanged)
+        return segment
     }()
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.dataSource = self
+        tableView.delegate = self
       //  tableView.prefetchDataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         return tableView
+    }()
+    
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.alignment = .leading
+        stackView.spacing = 5
+        return stackView
     }()
 
     override func viewDidLoad() {
@@ -47,8 +72,6 @@ class MainViewController: UIViewController {
                                                                target: nil,
                                                                action: nil)
         navigationItem.rightBarButtonItem = self.editButtonItem
-        tableView.dataSource = self
-        tableView.delegate = self
         SetupUI()
         Binding()
     }
@@ -57,14 +80,27 @@ class MainViewController: UIViewController {
         
         view.backgroundColor = .white
         
-        view.addSubview(tableView)
+        stackView.addArrangedSubview(segmentControl)
+        stackView.addArrangedSubview(searchBar)
+        stackView.addArrangedSubview(tableView)
+        
+        view.addSubview(stackView)
         
         //create the tableview constrains
         let safeArea = view.safeAreaLayoutGuide
-        tableView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+        stackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
+        stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10).isActive = true
+        stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
+        stackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
+        segmentControl.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        segmentControl.widthAnchor.constraint(equalToConstant: 350).isActive = true
+        searchBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        searchBar.widthAnchor.constraint(equalToConstant: 350).isActive = true
+        tableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 70).isActive = true
         tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant:  20).isActive = true
         tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant:  -20).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
+        
         
     }
 
@@ -76,16 +112,15 @@ class MainViewController: UIViewController {
                     self?.tableView.reloadData()
             }
             .store(in: &cancellables)
-        
         viewModel.getMovies()
     }
     
-    @objc private func switchSegment(_ sender: UISegmentedControl) {
+    @objc fileprivate func switchSegment(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            view.backgroundColor = .blue
+            print("Movies")
         case 1:
-            view.backgroundColor = .black
+            print("Favorites")
         default:
             return
         }
@@ -95,6 +130,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tableTodisplay = viewModel.movies
         return viewModel.movies.count
     }
 
@@ -102,9 +138,12 @@ extension MainViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as? MovieCell
         else {
             return UITableViewCell() }
-        let title = viewModel.getTitle(by: indexPath.row)
+        let title: String = viewModel.getTitle(by: indexPath.row)
         let overview = viewModel.getOverview(by: indexPath.row)
         let image = viewModel.getImageData(by: indexPath.row)
+        if seaeching {
+            
+        }
         cell.configureCell(title: title, overview: overview, imageData: image)
         return cell
     }
@@ -124,6 +163,22 @@ extension MainViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
+    }
+}
+
+extension MainViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        movieList = viewModel.movies
+        if searchText == "" {
+            filteredMovies = movieList
+        } else {
+            for movie in movieList {
+                if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
+                    filteredMovies.append(movie)
+                }
+            }
+        }
+        self.tableView.reloadData()
     }
 }
 

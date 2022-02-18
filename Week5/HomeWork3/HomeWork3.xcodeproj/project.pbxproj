@@ -21,6 +21,7 @@
 		023A219E27BE83C900474008 /* NetworkURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023A219D27BE83C900474008 /* NetworkURL.swift */; };
 		023A21A027BE83D800474008 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023A219F27BE83D800474008 /* NetworkError.swift */; };
 		023A21A227BE847400474008 /* MovieCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023A21A127BE847400474008 /* MovieCell.swift */; };
+		028E0A8227BF44FF003FB075 /* ProductionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028E0A8127BF44FF003FB075 /* ProductionCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		023A219D27BE83C900474008 /* NetworkURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkURL.swift; sourceTree = "<group>"; };
 		023A219F27BE83D800474008 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		023A21A127BE847400474008 /* MovieCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCell.swift; sourceTree = "<group>"; };
+		028E0A8127BF44FF003FB075 /* ProductionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductionCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 				023A219127BE827E00474008 /* DetailViewController.swift */,
 				023A219327BE828C00474008 /* SignInViewController.swift */,
 				023A21A127BE847400474008 /* MovieCell.swift */,
+				028E0A8127BF44FF003FB075 /* ProductionCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -200,6 +203,7 @@
 				023A219A27BE835C00474008 /* Results.swift in Sources */,
 				023A219E27BE83C900474008 /* NetworkURL.swift in Sources */,
 				023A217827BE81AF00474008 /* SceneDelegate.swift in Sources */,
+				028E0A8227BF44FF003FB075 /* ProductionCell.swift in Sources */,
 				023A219427BE828C00474008 /* SignInViewController.swift in Sources */,
 				023A219627BE82ED00474008 /* ViewModel.swift in Sources */,
 				023A219227BE827E00474008 /* DetailViewController.swift in Sources */,

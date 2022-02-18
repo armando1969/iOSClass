@@ -10,6 +10,8 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    var firstViewController = UIViewController()
+    var movieUser = ""
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -18,10 +20,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
                    window = UIWindow(windowScene: windowScene)
-                   let firstViewController = SignInViewController()
-                   let navigation = UINavigationController(rootViewController: firstViewController)
-                   window?.rootViewController = navigation
-                   window?.makeKeyAndVisible()
+        if movieUser != "" {
+            firstViewController = MainViewController() }
+        else {
+            firstViewController = SignInViewController() }
+        let navigation = UINavigationController(rootViewController: firstViewController)
+        window?.rootViewController = navigation
+        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -16,6 +16,7 @@ class DetailViewController: UIViewController {
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .leading
+        stackView.spacing = 5
         return stackView
     }()
     private lazy var verticalStackView2: UIStackView = {
@@ -33,6 +34,7 @@ class DetailViewController: UIViewController {
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .leading
+        stackView.spacing = 10
         return stackView
     }()
     
@@ -60,6 +62,12 @@ class DetailViewController: UIViewController {
         label.numberOfLines = 10
         label.textAlignment = .left
         return label
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let tableView = UICollectionView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
     }()
     
     private lazy var productionTitleLabel: UILabel = {
@@ -94,7 +102,6 @@ class DetailViewController: UIViewController {
         
         verticalStackView2.addArrangedSubview(productionTitleLabel)
         
-        
         view.addSubview(horizontalStackView)
         view.addSubview(verticalStackView2)
         
@@ -103,13 +110,9 @@ class DetailViewController: UIViewController {
         horizontalStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
         horizontalStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
         horizontalStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        horizontalStackView.bottomAnchor.constraint(equalTo: verticalStackView2.topAnchor,constant: -120).isActive = true
+        horizontalStackView.bottomAnchor.constraint(equalTo: verticalStackView2.topAnchor, constant: -30).isActive = true
         verticalStackView2.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
         verticalStackView2.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        verticalStackView2.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
-        horizontalStackView.spacing = 10
-        verticalStackView1.spacing = 5
-        
         movieImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         movieImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
     }

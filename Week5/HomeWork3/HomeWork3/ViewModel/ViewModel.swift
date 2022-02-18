@@ -35,6 +35,16 @@ class ViewModel {
         return movie.originalTitle.capitalized
     }
     
+//    func getTitles() -> [String] {
+//        var titles: [String] = []
+//        print(movies.count)
+//        for i in 0...(movies.count-1) {
+//            titles[i] = movies[i].originalTitle
+//            print(movies[i].originalTitle)
+//        }
+//        return [" ", " "]
+//    }
+    
     func getOverview(by row: Int) -> String {
         let movie = movies[row]
         return movie.overview.localizedCapitalized
@@ -43,8 +53,6 @@ class ViewModel {
     func getImageData(by row: Int) -> Data? {
         let movie = movies[row]
         let path = "https://image.tmdb.org/t/p/original\(movie.posterPath)"
-        print(path)
- 
         let url = URL(string: path)
         if let data = try? Data(contentsOf: url!) {
             return data
