@@ -87,7 +87,6 @@ extension ViewController: UITableViewDataSource {
     }
     
     func sendingCellStatustoTableView(cellStatus: Bool, row: Int) {
-        print(row)
         self.status?[row] = cellStatus
         TableView.reloadData()
     }

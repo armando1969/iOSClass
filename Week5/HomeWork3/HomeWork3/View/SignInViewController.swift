@@ -10,15 +10,6 @@ import UIKit
 
 class SignInViewController: UIViewController {
     
-    private lazy var stackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.distribution = .fill
-        stackView.alignment = .leading
-        return stackView
-    }()
-    
     private lazy var mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -33,6 +24,8 @@ class SignInViewController: UIViewController {
         let saveButton = UIButton()
         saveButton.translatesAutoresizingMaskIntoConstraints = false
         saveButton.setTitle("Save", for: .normal)
+        saveButton.layer.cornerRadius = 9
+        saveButton.layer.borderWidth = 1
         saveButton.addTarget(self, action: #selector(pressed), for: .touchUpInside)
         saveButton.setTitleColor(UIColor.blue, for: .normal)
         return saveButton
@@ -41,6 +34,7 @@ class SignInViewController: UIViewController {
     private let userTextField: UITextField = {
         let userTextField = UITextField()
         userTextField.translatesAutoresizingMaskIntoConstraints = false
+        userTextField.layer.borderWidth = 1
         userTextField.attributedPlaceholder = NSAttributedString(
             string: "write your name here",
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.opaqueSeparator])
@@ -60,19 +54,16 @@ class SignInViewController: UIViewController {
         view.backgroundColor = .white
 
         mainStackView.addArrangedSubview(userTextField)
-        stackView.addArrangedSubview(saveButton)
-        mainStackView.addArrangedSubview(stackView)
+        mainStackView.addArrangedSubview(saveButton)
         
         view.addSubview(mainStackView)
 
         let safeArea = view.safeAreaLayoutGuide
         userTextField.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
         userTextField.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
-
-        stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
-        saveButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: 270).isActive = true
-
+        saveButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 240).isActive = true
+        saveButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
+        saveButton.widthAnchor.constraint(equalToConstant: 150).isActive = true
 
         mainStackView.centerYAnchor.constraint(equalTo: safeArea.centerYAnchor, constant: -60).isActive = true
 

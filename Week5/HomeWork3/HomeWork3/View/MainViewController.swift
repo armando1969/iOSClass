@@ -8,16 +8,20 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, FavoriteStatusProtocol {
     
     private let viewModel = ViewModel()
     private var cancellables = Set<AnyCancellable>()
     private let segments = ["Movie List", "Favorites"]
-    lazy var tableTodisplay = [Results]()
-    lazy var movieList = [Results]()
-    lazy var filteredMovies = [Results]()
+    var tableToDisplay = 0
+    var moviesList = [Results]()
+    var favoriteMovieList = [FavoriteMovies]()
+    var favIndex = 0
+    var favoriteStatus: [Bool] = [false]
+    var filteredMovies = [Results]()
     var customer = ""
     var seaeching = false
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
     
@@ -37,7 +41,7 @@ class MainViewController: UIViewController {
         segment.layer.cornerRadius = 9
         segment.layer.borderWidth = 1
         segment.layer.masksToBounds = true
-     //   segments.addTarget(self, action: #selector(switchSegment(_:)), for: .valueChanged)
+        segment.addTarget(self, action: #selector(switchSegment), for: .valueChanged)
         return segment
     }()
     
@@ -46,7 +50,6 @@ class MainViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.dataSource = self
         tableView.delegate = self
-      //  tableView.prefetchDataSource = self
         tableView.register(MovieCell.self, forCellReuseIdentifier: MovieCell.identifier)
         return tableView
     }()
@@ -76,6 +79,15 @@ class MainViewController: UIViewController {
         Binding()
     }
     
+    private func fetchMovies() {
+//        do {
+//            try <#throwing expression#>
+//        } catch <#pattern#> {
+//            <#statements#>
+//        }
+        
+    }
+    
     private func SetupUI() {
         
         view.backgroundColor = .white
@@ -88,13 +100,9 @@ class MainViewController: UIViewController {
         
         //create the tableview constrains
         let safeArea = view.safeAreaLayoutGuide
-        stackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-        stackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10).isActive = true
-        stackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-        stackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
         segmentControl.heightAnchor.constraint(equalToConstant: 35).isActive = true
         segmentControl.widthAnchor.constraint(equalToConstant: 350).isActive = true
-        searchBar.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        searchBar.heightAnchor.constraint(equalToConstant: 35).isActive = true
         searchBar.widthAnchor.constraint(equalToConstant: 350).isActive = true
         tableView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 70).isActive = true
         tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant:  20).isActive = true
@@ -109,7 +117,8 @@ class MainViewController: UIViewController {
             .$movies
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
-                    self?.tableView.reloadData()
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData() }
             }
             .store(in: &cancellables)
         viewModel.getMovies()
@@ -118,11 +127,14 @@ class MainViewController: UIViewController {
     @objc fileprivate func switchSegment(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
-            print("Movies")
+            tableToDisplay = 0
         case 1:
-            print("Favorites")
+            tableToDisplay = 1
         default:
             return
+        }
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
 
@@ -130,33 +142,75 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableTodisplay = viewModel.movies
-        return viewModel.movies.count
+        if tableToDisplay == 0 {
+            return viewModel.movies.count
+        } else {
+            return favoriteMovieList.count
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as? MovieCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCell.identifier, for: indexPath) as? MovieCell
         else {
             return UITableViewCell() }
-        let title: String = viewModel.getTitle(by: indexPath.row)
-        let overview = viewModel.getOverview(by: indexPath.row)
-        let image = viewModel.getImageData(by: indexPath.row)
-        if seaeching {
-            
+        if tableToDisplay == 0 {
+            let title = viewModel.getTitle(by: indexPath.row)
+            let overview = viewModel.getOverview(by: indexPath.row)
+            let image = viewModel.getMovieImageData(by: indexPath.row)
+            cell.configureCell(title: title, overview: overview, imageData: image)
         }
-        cell.configureCell(title: title, overview: overview, imageData: image)
+        else {
+            if favoriteMovieList.count != 0 {
+                let title = favoriteMovieList[indexPath.row].originalTitle
+                let overview = favoriteMovieList[indexPath.row].overview
+                let image = favoriteMovieList[indexPath.row].posterPath
+                cell.configureCell(title: title, overview: overview, imageData: image)
+            }
+            }
+//        if seaeching {
+//
+//        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let movieId = viewModel.getMovieId(by: indexPath.row)
         let detail = DetailViewController()
+        detail.delegate = self
         detail.originalTitle = viewModel.getTitle(by: indexPath.row)
         detail.overView = viewModel.getOverview(by: indexPath.row)
-        detail.image = viewModel.getImageData(by: indexPath.row)!
+        detail.image = viewModel.getMovieImageData(by: indexPath.row)!
+        detail.id = movieId
+        for i in stride(from: 0, to: (filteredMovies.count-1), by: 1) {
+            if favoriteMovieList[i].id  == movieId {
+                detail.isFavorite = true
+            } else {
+                detail.isFavorite = false
+            }
+        }
+//        detail.productionCo = viewModel.$companies
+//                                                    .receive(on: RunLoop.main)
+//                                                    .sink(receiveValue: {[weak self] name in
+//                                                        return name
+//                                                    }).store(in: &cancellables)
+//            self.viewModel.getProductionCompanies(id: movieId)
         navigationController?.pushViewController(detail, animated: true)
-        
+        if detail.isFavorite == true {
+        }
     }
+    
+    func sendingFavoriteStatus(id: Int, isFavorite: Bool, originalTitle: String, overview: String, posterPath: Data) {
+        print(originalTitle)
+//        self.favoriteStatus[favIndex] = isFavorite
+ //       self.favoriteMovieList![favIndex].id = id
+//        self.favoriteMovieList[favIndex].originalTitle = originalTitle
+//        self.favoriteMovieList[favIndex].overview = overview
+//        self.favoriteMovieList[favIndex].posterPath = posterPath
+        favIndex = favIndex + 1
+    }
+    
+   
 }
 
 extension MainViewController: UITableViewDelegate {
@@ -168,23 +222,19 @@ extension MainViewController: UITableViewDelegate {
 
 extension MainViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        movieList = viewModel.movies
+        moviesList = viewModel.movies
         if searchText == "" {
-            filteredMovies = movieList
+            filteredMovies = moviesList
         } else {
-            for movie in movieList {
+            for movie in moviesList {
                 if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
                     filteredMovies.append(movie)
                 }
             }
         }
-        self.tableView.reloadData()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
     }
 }
 
-//extension ViewController: UITableViewDataSourcePrefetching {
-//
-//    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
-//        viewModel.loadMoreMovies()
-//    }
-//}

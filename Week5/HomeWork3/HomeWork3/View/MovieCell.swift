@@ -11,7 +11,7 @@ class MovieCell: UITableViewCell {
     
     static let identifier = "MovieCell"
     
-    private lazy var verticalStackView1: UIStackView = {
+    private lazy var verticalStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -74,11 +74,11 @@ class MovieCell: UITableViewCell {
     }
     
     private func setUpUI() {
-        verticalStackView1.addArrangedSubview(originalTitleLabel)
-        verticalStackView1.addArrangedSubview(overviewLabel)
+        verticalStackView.addArrangedSubview(originalTitleLabel)
+        verticalStackView.addArrangedSubview(overviewLabel)
         
         horizontalStackView.addArrangedSubview(movieImageView)
-        horizontalStackView.addArrangedSubview(verticalStackView1)
+        horizontalStackView.addArrangedSubview(verticalStackView)
         
         contentView.addSubview(horizontalStackView)
         
@@ -88,7 +88,7 @@ class MovieCell: UITableViewCell {
         horizontalStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
         horizontalStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
         horizontalStackView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor).isActive = true
-        verticalStackView1.spacing = 5
+        verticalStackView.spacing = 5
         horizontalStackView.spacing = 10
         
         movieImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
