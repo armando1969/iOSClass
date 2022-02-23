@@ -8,22 +8,28 @@
 import Foundation
 import Combine
 import UIKit
+import CoreData
 
 class ViewModel {
     
     private let networkManager = NetworkManager()
     private var after = ""
     private var isLoading = false
-    @Published private(set) var movies = [Results]()
+    @Published private(set) var movies = [Movie]()
     @Published private(set) var companies = [ProductionCompany]()
     @Published private(set) var images = [Data]()
+    var favoriteMovies = [FavoriteMovies]()
+    private var favoriteIndex = 0
     
     func getMovies() {
+        
+        
         networkManager
             .getModel(MovieList.self, from: NetworkURL.baseMovieURL) { [weak self] result in
                 switch result {
                 case .success(let response):
                     self?.movies = response.results.map { $0 }
+                    self?.saveMovies()
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
@@ -42,6 +48,34 @@ class ViewModel {
             }
     }
     
+    private func saveMovies() {
+        let context = CoreDataManager.shared.mainContext
+        guard let entityDescription = NSEntityDescription.entity(forEntityName: "CoreDataMovie", in: context) else
+        {
+            return
+        }
+        context.perform {
+            for movie in self.movies {
+                let CDMovie = CoreDataMovie(entity: entityDescription, insertInto: context)
+                CDMovie.id = Int64(movie.id)
+                CDMovie.title = movie.originalTitle
+                CDMovie.overview = movie.overview
+                CDMovie.posterPath = movie.posterPath
+                CDMovie.isFavorite = false
+                try? context.save()
+            }
+        }
+    }
+    
+//    private func getAllCDMovies()  -> [Movie] {
+//        let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
+//        let context = CoreDataManager.shared.mainContext
+//        context.perform {
+//            let CoreDataMovies = try? context.fetch(request)
+//            
+//        }
+//    }
+    
     
     func getTitle(by row: Int) -> String {
         let movie = movies[row]
@@ -50,8 +84,16 @@ class ViewModel {
     
     func getOverview(by row: Int) -> String {
         let movie = movies[row]
-      //  print(movie)
         return movie.overview.localizedCapitalized
+    }
+    
+    func setFavorite(id: Int, title: String, overview: String, image: Data) {
+        favoriteMovies[favoriteIndex].id = id
+        favoriteMovies[favoriteIndex].originalTitle = title
+        favoriteMovies[favoriteIndex].overview = overview
+        favoriteMovies[favoriteIndex].posterPath = image
+        favoriteIndex += favoriteIndex
+        print(favoriteIndex)
     }
     
     func getProductionCo(by row: Int) -> String {

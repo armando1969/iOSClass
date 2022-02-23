@@ -1,5 +1,5 @@
 //
-//  Results.swift
+//  Movie.swift
 //  HomeWork3
 //
 //  Created by Consultant on 2/17/22.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Results: Codable {
+struct Movie: Codable {
     let id: Int
     let originalTitle: String
     let overview: String

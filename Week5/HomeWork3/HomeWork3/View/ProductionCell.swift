@@ -46,24 +46,19 @@ class ProductionCell: UICollectionViewCell {
         }
     }
     
-    private func setUpUI() {
-      //  verticalStackView.addArrangedSubview(productionCoImageView)
-      //  verticalStackView.addArrangedSubview(productionCoTitleLabel)
-        
+    private func setUpUI() {        
         contentView.addSubview(productionCoImageView)
         contentView.addSubview(productionCoTitleLabel)
         
-        //the stack constraints
-     //   let safeArea = contentView.safeAreaLayoutGuide
+        //image
         productionCoImageView.topAnchor.constraint(equalTo: topAnchor).isActive = true
         productionCoImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5).isActive = true
         productionCoImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5).isActive = true
-        productionCoImageView.heightAnchor.constraint(equalTo: heightAnchor, constant: 50).isActive = true
-        productionCoImageView.widthAnchor.constraint(equalTo: widthAnchor, constant: 150).isActive = true
-     //   verticalStackView.spacing = 5
+        productionCoImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 2/3).isActive = true
+        // name
+        productionCoTitleLabel.topAnchor.constraint(equalTo: productionCoImageView.bottomAnchor, constant: 10).isActive = true
+        productionCoTitleLabel.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         
-        productionCoTitleLabel.topAnchor.constraint(equalTo: productionCoImageView.bottomAnchor).isActive = true
-      //  productionCoTitleLabel.widthAnchor.constraint(equalToConstant: 220).isActive = true
     }
     
 }

@@ -8,6 +8,6 @@
 import Foundation
 
 struct MovieList: Codable {
-    let results: [Results]
+    let results: [Movie]
 
 }

@@ -8,19 +8,17 @@
 import UIKit
 import Combine
 
-class MainViewController: UIViewController, FavoriteStatusProtocol {
+class MainViewController: UIViewController {
     
     private let viewModel = ViewModel()
     private var cancellables = Set<AnyCancellable>()
     private let segments = ["Movie List", "Favorites"]
     var tableToDisplay = 0
-    var moviesList = [Results]()
-    var favoriteMovieList = [FavoriteMovies]()
-    var favIndex = 0
+    var moviesList = [Movie]()
     var favoriteStatus: [Bool] = [false]
-    var filteredMovies = [Results]()
+    var filteredMovies: [Movie]!
     var customer = ""
-    var seaeching = false
+    var searching = false
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
@@ -75,18 +73,20 @@ class MainViewController: UIViewController, FavoriteStatusProtocol {
                                                                target: nil,
                                                                action: nil)
         navigationItem.rightBarButtonItem = self.editButtonItem
+        filteredMovies = viewModel.movies
+        searchBar.delegate = self
         SetupUI()
         Binding()
     }
     
-    private func fetchMovies() {
-//        do {
-//            try <#throwing expression#>
-//        } catch <#pattern#> {
-//            <#statements#>
-//        }
-        
-    }
+//    private func fetchMovies() {
+////        do {
+////            try <#throwing expression#>
+////        } catch <#pattern#> {
+////            <#statements#>
+////        }
+//
+//    }
     
     private func SetupUI() {
         
@@ -145,7 +145,7 @@ extension MainViewController: UITableViewDataSource {
         if tableToDisplay == 0 {
             return viewModel.movies.count
         } else {
-            return favoriteMovieList.count
+            return viewModel.favoriteMovies.count
         }
     }
 
@@ -160,13 +160,11 @@ extension MainViewController: UITableViewDataSource {
             cell.configureCell(title: title, overview: overview, imageData: image)
         }
         else {
-            if favoriteMovieList.count != 0 {
-                let title = favoriteMovieList[indexPath.row].originalTitle
-                let overview = favoriteMovieList[indexPath.row].overview
-                let image = favoriteMovieList[indexPath.row].posterPath
+                let title = viewModel.favoriteMovies[indexPath.row].originalTitle//favoriteMovieList[indexPath.row].originalTitle
+                let overview = viewModel.favoriteMovies[indexPath.row].overview
+                let image = viewModel.favoriteMovies[indexPath.row].posterPath
                 cell.configureCell(title: title, overview: overview, imageData: image)
-            }
-            }
+             }
 //        if seaeching {
 //
 //        }
@@ -177,13 +175,12 @@ extension MainViewController: UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
         let movieId = viewModel.getMovieId(by: indexPath.row)
         let detail = DetailViewController()
-        detail.delegate = self
         detail.originalTitle = viewModel.getTitle(by: indexPath.row)
         detail.overView = viewModel.getOverview(by: indexPath.row)
         detail.image = viewModel.getMovieImageData(by: indexPath.row)!
         detail.id = movieId
         for i in stride(from: 0, to: (filteredMovies.count-1), by: 1) {
-            if favoriteMovieList[i].id  == movieId {
+            if viewModel.favoriteMovies[i].id  == movieId {
                 detail.isFavorite = true
             } else {
                 detail.isFavorite = false
@@ -196,21 +193,9 @@ extension MainViewController: UITableViewDataSource {
 //                                                    }).store(in: &cancellables)
 //            self.viewModel.getProductionCompanies(id: movieId)
         navigationController?.pushViewController(detail, animated: true)
-        if detail.isFavorite == true {
-        }
+//        if detail.isFavorite == true {
+//        }
     }
-    
-    func sendingFavoriteStatus(id: Int, isFavorite: Bool, originalTitle: String, overview: String, posterPath: Data) {
-        print(originalTitle)
-//        self.favoriteStatus[favIndex] = isFavorite
- //       self.favoriteMovieList![favIndex].id = id
-//        self.favoriteMovieList[favIndex].originalTitle = originalTitle
-//        self.favoriteMovieList[favIndex].overview = overview
-//        self.favoriteMovieList[favIndex].posterPath = posterPath
-        favIndex = favIndex + 1
-    }
-    
-   
 }
 
 extension MainViewController: UITableViewDelegate {

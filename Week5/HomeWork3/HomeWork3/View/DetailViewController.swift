@@ -9,13 +9,7 @@ import Foundation
 import UIKit
 import Combine
 
-protocol FavoriteStatusProtocol {
-    func sendingFavoriteStatus(id: Int, isFavorite: Bool, originalTitle: String, overview: String, posterPath: Data)
-}
-
 class DetailViewController: UIViewController {
-    
-    var delegate: FavoriteStatusProtocol? = nil
     
     private let viewModel = ViewModel()
     private var cancellables = Set<AnyCancellable>()
@@ -52,6 +46,7 @@ class DetailViewController: UIViewController {
         let favoriteButton = UIButton()
         favoriteButton.translatesAutoresizingMaskIntoConstraints = false
         favoriteButton.setTitle("Add to Favorites", for: .normal)
+        favoriteButton.titleLabel?.adjustsFontSizeToFitWidth = true
         favoriteButton.layer.cornerRadius = 9
         favoriteButton.layer.borderWidth = 1
         favoriteButton.addTarget(self, action: #selector(pressed), for: .touchUpInside)
@@ -69,7 +64,7 @@ class DetailViewController: UIViewController {
     private lazy var originalTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldSystemFont(ofSize: 17)
         label.numberOfLines = 1
         label.textAlignment = .left
         return label
@@ -79,7 +74,7 @@ class DetailViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont(name: "Arial", size: 15)
-        label.numberOfLines = 10
+        label.numberOfLines = 11
         label.textAlignment = .left
         return label
     }()
@@ -87,18 +82,16 @@ class DetailViewController: UIViewController {
     private var collectionView: UICollectionView
     = {
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 250, height: 80)
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 1
+        layout.minimumInteritemSpacing = 1
+        layout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        layout.minimumLineSpacing = 1
-//        layout.minimumInteritemSpacing = 1
-//        layout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(ProductionCell.self, forCellWithReuseIdentifier: ProductionCell.identifier)
         return collection
     }()
-    
-//    init(frame: CGRect,
-//    collectionViewLayout layout: UICollectionViewLayout)
     
     private lazy var productionTitleLabel: UILabel = {
         let label = UILabel()
@@ -126,28 +119,19 @@ class DetailViewController: UIViewController {
     @objc
     private func pressed() {
         if isFavorite == false {
-            self.delegate?.sendingFavoriteStatus(id: id, isFavorite: true, originalTitle: originalTitle, overview: overView, posterPath: image  )
             favoritesButton.backgroundColor = UIColor.gray
-            favoritesButton.setTitle("Remove from Favorites", for: .normal)
+         //   favoritesButton.setTitle("Remove from Favorites", for: .normal)
+            viewModel.setFavorite(id: id, title: originalTitle, overview: overView, image: image)
             isFavorite = true
         } else {
-            favoritesButton.setTitle("Add to Favorites", for: .normal)
-            favoritesButton.backgroundColor = UIColor.white
-            isFavorite = false
+//            favoritesButton.setTitle("Add to Favorites", for: .normal)
+//            favoritesButton.backgroundColor = UIColor.white
+//            isFavorite = false
         }
     }
     
     private func SetupUI() {
         view.backgroundColor = .white
-        
-        // define constraint collectionview
-        
-//        guard let collectionView = collectionView else {
-//            return
-//        }
-        collectionView.register(ProductionCell.self, forCellWithReuseIdentifier: ProductionCell.identifier)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.dataSource = self
         
         originalTitleLabel.text = originalTitle
         overviewLabel.text = overView
@@ -167,27 +151,35 @@ class DetailViewController: UIViewController {
         view.addSubview(horizontalStackView)
         view.addSubview(verticalStackView2)
 
-//        //the stack constraints
+        //the stack constraints
         
         let safeArea = view.safeAreaLayoutGuide
-        horizontalStackView.topAnchor.constraint(equalTo: safeArea.topAnchor).isActive = true
-        horizontalStackView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
-        horizontalStackView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        horizontalStackView.bottomAnchor.constraint(equalTo: collectionView.topAnchor, constant: -50).isActive = true
-        verticalStackView2.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
-        verticalStackView2.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        verticalStackView2.heightAnchor.constraint(equalToConstant: 240).isActive = true
-        verticalStackView2.widthAnchor.constraint(equalToConstant: 800).isActive = true
-        productionTitleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
-        productionTitleLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        favoritesButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 180).isActive = true
+        
+        //image constraints
+        movieImageView.topAnchor.constraint(equalTo: safeArea.topAnchor, constant: 20).isActive = true
+        movieImageView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 10).isActive = true
+        movieImageView.heightAnchor.constraint(equalToConstant: 220).isActive = true
+        movieImageView.widthAnchor.constraint(equalTo: movieImageView.heightAnchor, multiplier: 3/4).isActive = true
+        // title constraints
+        originalTitleLabel.topAnchor.constraint(equalTo: movieImageView.topAnchor).isActive = true
+        originalTitleLabel.leadingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: 10).isActive = true
+        originalTitleLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
+        //overview constraints
+        overviewLabel.leadingAnchor.constraint(equalTo: movieImageView.trailingAnchor, constant: 10).isActive = true
+        overviewLabel.topAnchor.constraint(equalTo: originalTitleLabel.bottomAnchor, constant: 10).isActive = true
+        overviewLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -10).isActive = true
+        //button constraints
+        favoritesButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 220).isActive = true
         favoritesButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20).isActive = true
-        productionTitleLabel.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -450).isActive = true
-        collectionView.topAnchor.constraint(equalTo: productionTitleLabel.bottomAnchor).isActive = true
+        favoritesButton.topAnchor.constraint(equalTo: movieImageView.bottomAnchor, constant: 20).isActive = true
+        // production title constraints
+        productionTitleLabel.topAnchor.constraint(equalTo: favoritesButton.bottomAnchor, constant: 40).isActive = true
+        productionTitleLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20).isActive = true
+        // collectionview constraints
+        collectionView.topAnchor.constraint(equalTo: productionTitleLabel.bottomAnchor, constant: 10).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
-        movieImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        movieImageView.widthAnchor.constraint(equalToConstant: 140).isActive = true
+        collectionView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
     
     func Binding() {
@@ -206,7 +198,7 @@ class DetailViewController: UIViewController {
     }
 }
 
-extension DetailViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension DetailViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.companies.count
     }
@@ -218,7 +210,6 @@ extension DetailViewController: UICollectionViewDataSource, UICollectionViewDele
         let productionCo = viewModel.companies[indexPath.row].name
         let image = viewModel.getProductionImageData(by: indexPath.row)
         cell.configureCell(productionCo: productionCo, imageData: image)
-      //  cell.backgroundColor = .lightGray
         return cell
     }
 }
