@@ -16,7 +16,7 @@ class ViewModel {
     private var isLoading = false
     @Published private(set) var movies = [Movie]()
     @Published private(set) var companies = [ProductionCompany]()
-    @Published private(set) var favoriteMovie = FavoriteMovie(id: 0, orginalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
+    @Published private(set) var favoriteMovie = FavoriteMovie(id: 0, originalTitle: "", overview: "", posterPath: "", favoriteIndex: -1)
     
     var favoriteMovies = [FavoriteMovie?]()
     private var movie = Movie()
@@ -43,6 +43,10 @@ class ViewModel {
     func getProductionCompanies(id movieId: Int) {
         
         // I need to implement logic for if favorite has data
+        
+//        let currentMovies = getAllCDMovies()
+//
+//        if currentMovies.isEmpty {
         networkManager
             .getModel(Production.self, from: "\(NetworkURL.baseProductionURL)\(movieId)?api_key=6622998c4ceac172a976a1136b204df4&language=en-US") { [weak self] result in
                 switch result {
@@ -53,6 +57,9 @@ class ViewModel {
                     print(error.localizedDescription)
                 }
             }
+//        } else {
+//            movies = currentMovies
+//        }
     }
     
     private func saveMovies() {
@@ -72,16 +79,20 @@ class ViewModel {
         }
     }
     
-//    private func getAllCDMovies()  -> [Movie] {
-//        let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
-//        let context = CoreDataManager.shared.mainContext
-//        context.perform {
-//            let cDMovies = try? context.fetch(request)
-//            var newMovies = [Movie]()
-//        }
-//    }
-    
-    
+    private func getAllCDMovies() -> [FavoriteMovie] {
+        let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
+        let context = CoreDataManager.shared.mainContext
+        var newMovies = [FavoriteMovie]()
+            //alternatively you could use the map operator
+        context.performAndWait {
+            let cDMovies = try? context.fetch(request)
+            for cDMovie in (cDMovies ?? []) {
+                let tempMovie = cDMovie.CreateMovie()
+                newMovies.append(tempMovie)
+            }
+        }
+        return newMovies
+    }
     
     func getImageData(_ path: String, completion: @escaping (Data?) -> Void)  {
         let url = URL(string: path)
@@ -108,18 +119,16 @@ class ViewModel {
     }
     
     func getfavoriteMovie(by row: Int) -> FavoriteMovie {
-        let path = "https://image.tmdb.org/t/p/original\(favoriteMovies[row]!.posterPath ?? "")"
+        
+        let path = "https://image.tmdb.org/t/p/original\(favoriteMovies[row]!.posterPath)"
         favoriteMovie.id = favoriteMovies[row]!.id
         favoriteMovie.originalTitle = favoriteMovies[row]!.originalTitle
         favoriteMovie.overview = favoriteMovies[row]!.overview
         favoriteMovie.posterPath = path
-        favoriteMovie.isFavorite = movies[row].isFavorite
-        print("in the VM the index for \(movies[row].originalTitle) is set to: \(movies[row].isFavorite)")
-            return favoriteMovie
+        return favoriteMovie
     }
     
     func setFavoriteMovie(id: Int, title: String, overview: String, posterPath: String, isFavorite: Bool) {
-        print("in the Set the index for \(title) is set to: \(isFavorite)")
         favoriteMovie.id = id
         favoriteMovie.originalTitle = title
         favoriteMovie.overview = overview
@@ -127,8 +136,11 @@ class ViewModel {
         for i in 0...(movies.count-1) {
             if movies[i].id == id {
                 movies[i].isFavorite = isFavorite
+                movies[i].favoriteIndex = favIndex
+                favoriteStatus[i] = isFavorite
             }
         }
+        favIndex += 1
         favoriteMovies.append(favoriteMovie)
     }
     
@@ -140,22 +152,23 @@ class ViewModel {
         return user
     }
     
-    func setIsfavorite(by row: Int, status: Bool) {
-        movies[row].favoriteIndex = favIndex
-        favIndex += 1
-        favoriteStatus[row] = status
-        //print("the index \(movies[row].originalTitle) is set to: \(movies[row].favoriteIndex)")
-    }
-    
     func getFavorite(by row: Int) -> Bool {
         return favoriteStatus[row]
     }
     
     func deleteFavoriteMovie(id: Int) {
+        for j in 0...(movies.count-1) {
+            if movies[j].id == id {
+                movies[j].isFavorite = false
+                movies[j].favoriteIndex = -1
+            }
+        }
+        favIndex -= 1
         for i in 0...(favoriteMovies.count-1) {
-//            print(i)
-//        print("and we removed\(favoriteMovies[i]!.originalTitle) at: \(i)")
-        favoriteMovies.remove(at: i)
+            if favoriteMovies[i]!.id == id {
+                favoriteMovies.remove(at: i)
+                return
+            }
         }
     }
 }

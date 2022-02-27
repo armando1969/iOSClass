@@ -12,15 +12,15 @@ struct FavoriteMovie: Codable {
     var originalTitle: String
     var overview: String
     var posterPath: String
-    var isFavorite: Bool
+   // var isFavorite: Bool
     var favoriteIndex: Int
     
-    init(id: Int, orginalTitle: String, overview: String, posterPath: String, isFavorite: Bool, favoriteIndex: Int) {
+    init(id: Int, originalTitle: String, overview: String, posterPath: String, /*isFavorite: Bool,*/ favoriteIndex: Int) {
         self.id = id
-        self.originalTitle = orginalTitle
+        self.originalTitle = originalTitle
         self.overview = overview
         self.posterPath = posterPath
-        self.isFavorite = isFavorite
+      //  self.isFavorite = isFavorite
         self.favoriteIndex = favoriteIndex
     }
 }

@@ -108,7 +108,6 @@ class DetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("In the detail the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
         if movie.isFavorite == true {
             favoritesButton.backgroundColor = UIColor.gray
             favoritesButton.setTitle("Remove from Favorites", for: .normal)
@@ -126,16 +125,11 @@ class DetailViewController: UIViewController {
             favoritesButton.setTitle("Remove from Favorites", for: .normal)
             favoritesButton.backgroundColor = UIColor.gray
             movie.isFavorite = true
-            viewModel.setIsfavorite(by: row, status: movie.isFavorite)
-           // movie.favoriteIndex = row
-            print("In the button the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
             viewModel.setFavoriteMovie(id: movie.id, title: movie.originalTitle, overview: movie.overview, posterPath: movie.posterPath, isFavorite: movie.isFavorite)
         } else {
             favoritesButton.setTitle("Add to Favorites", for: .normal)
             favoritesButton.backgroundColor = UIColor.white
             movie.isFavorite = false
-            print("In the button the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
-      //      viewModel.setIsfavorite(by: -1, status: isFavorite)
             viewModel.deleteFavoriteMovie(id: movie.id)
         }
     }
@@ -211,7 +205,6 @@ class DetailViewController: UIViewController {
             }
             .store(in: &cancellables)
         viewModel.getProductionCompanies(id: movie.id)
-        print(productionCo.count)
     }
 }
 

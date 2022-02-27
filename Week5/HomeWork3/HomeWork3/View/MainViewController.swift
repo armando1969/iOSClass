@@ -14,9 +14,8 @@ class MainViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     private let segments = ["Movie List", "Favorites"]
     var tableToDisplay = 0
-//    var moviesList = [Movie]()
-//    var filteredMovies: [Movie]!
-//    var user = ""
+    var moviesList = [Movie]()
+    var filteredMovies: [Movie]!
     var searching = false
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -59,22 +58,44 @@ class MainViewController: UIViewController {
         stackView.spacing = 5
         return stackView
     }()
+    
+    private var editView: UIView {
+        let editView = UIView()
+        editView.isHidden = true
+        return editView
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
-        navigationItem.hidesBackButton = true
-        
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Hello: \(viewModel.getUser())",
                                                            style: UIBarButtonItem.Style.plain,
                                                                target: nil,
                                                                action: nil)
-        navigationItem.rightBarButtonItem = self.editButtonItem
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
        // filteredMovies = viewModel.movies
         searchBar.delegate = self
         SetupUI()
         Binding()
+    }
+    
+    @objc
+    private func edit() {
+        print("here")
+        let alert = UIAlertController(title: "Edit", message: "Edit Your Name Here", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Edit user here",
+                attributes: [NSAttributedString.Key.foregroundColor: UIColor.opaqueSeparator])
+        }
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [self, weak alert] (_) in
+            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            self.viewModel.setUser(user: textField!.text!)
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Hello: \(viewModel.getUser())",
+                                                               style: UIBarButtonItem.Style.plain,
+                                                                   target: nil,
+                                                                   action: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
     }
     
 //    private func fetchMovies() {
@@ -107,8 +128,6 @@ class MainViewController: UIViewController {
         tableView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant:  20).isActive = true
         tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant:  -20).isActive = true
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
-        
-        
     }
 
     func Binding() {
@@ -130,13 +149,10 @@ class MainViewController: UIViewController {
         case 1:
             tableToDisplay = 1
         default:
-            return
-        }
+            return }
         DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+            self.tableView.reloadData() }
     }
-
 }
 
 extension MainViewController: UITableViewDataSource {
@@ -158,11 +174,11 @@ extension MainViewController: UITableViewDataSource {
             let title = movie.originalTitle
             let overview = movie.overview
             let image = movie.posterPath
-            let favorite = viewModel.getFavorite(by: indexPath.row)
+            let favorite = movie.isFavorite //viewModel.getFavorite(by: indexPath.row)
             cell.configureCell(title: title, overview: overview, imageData: image, isFavorite: favorite)
         }
         else {
-            var movie = FavoriteMovie(id: 0, orginalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
+            var movie = FavoriteMovie(id: 0, originalTitle: "", overview: "", posterPath: "", favoriteIndex: -1)
             movie = viewModel.getfavoriteMovie(by: indexPath.row)
             let title = movie.originalTitle
             let overview = movie.overview
@@ -180,7 +196,6 @@ extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let movie = viewModel.getMovie(by: indexPath.row)
-        print("in the main the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
         let detail = DetailViewController()
         detail.movie = movie
         detail.row = indexPath.row
@@ -214,7 +229,7 @@ extension MainViewController: UITableViewDelegate {
 }
 
 extension MainViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 //        moviesList = viewModel.movies
 //        if searchText == "" {
 //            filteredMovies = moviesList
@@ -223,11 +238,12 @@ extension MainViewController: UISearchBarDelegate {
 //                if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
 //                    filteredMovies.append(movie)
 //                }
+//                print(filteredMovies.count)
 //            }
 //        }
 //        DispatchQueue.main.async {
 //            self.tableView.reloadData()
 //        }
-    }
+//    }
 }
 
