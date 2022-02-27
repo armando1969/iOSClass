@@ -43,9 +43,10 @@ class SignInViewController: UIViewController {
         return userTextField
     }()
     
+    private let viewModel = ViewModel.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         setUpUI()
     }
@@ -70,6 +71,8 @@ class SignInViewController: UIViewController {
     }
     @objc
     private func pressed() {
+//        var allowedCharacters = CharacterSet.alphanumerics
+//        (userTextField.text(in: allowedCharacters) != nil)
         guard let user = userTextField.text, user.count >= 3 else
         {
             let invalidAlert = createAlert("The username is blank or invalid")
@@ -77,7 +80,7 @@ class SignInViewController: UIViewController {
             return
         }
         let detail = MainViewController()
-        detail.customer = userTextField.text!
+        viewModel.setUser(user: userTextField.text!)
         navigationController?.pushViewController(detail, animated: true)
     }
 }

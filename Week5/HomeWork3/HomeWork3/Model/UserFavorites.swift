@@ -8,5 +8,5 @@
 import Foundation
 
 struct UserFavorites: Codable {
-    let userFavorites: [FavoriteMovies]
+    let userFavorites: [Movie]
 }

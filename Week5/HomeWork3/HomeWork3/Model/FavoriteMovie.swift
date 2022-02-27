@@ -7,18 +7,20 @@
 
 import Foundation
 
-struct FavoriteMovies: Codable {
+struct FavoriteMovie: Codable {
     var id: Int
     var originalTitle: String
     var overview: String
-    var posterPath: Data
-    var isFavorite: Bool = false
+    var posterPath: String
+    var isFavorite: Bool
+    var favoriteIndex: Int
     
-//    init(id: Int, orginalTitle: String, overview: String, posterPath: String, isFavorite: Bool) {
-//        self.id = id
-//        self.originalTitle = orginalTitle
-//        self.overview = overview
-//       // self.posterPath = posterPath
-//        self.isFavorite = isFavorite
-//    }
+    init(id: Int, orginalTitle: String, overview: String, posterPath: String, isFavorite: Bool, favoriteIndex: Int) {
+        self.id = id
+        self.originalTitle = orginalTitle
+        self.overview = overview
+        self.posterPath = posterPath
+        self.isFavorite = isFavorite
+        self.favoriteIndex = favoriteIndex
+    }
 }

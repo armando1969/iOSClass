@@ -11,10 +11,10 @@ import Combine
 
 class DetailViewController: UIViewController {
     
-    private let viewModel = ViewModel()
+    private let viewModel = ViewModel.shared
     private var cancellables = Set<AnyCancellable>()
     
-    private lazy var verticalStackView1: UIStackView = {
+    private lazy var movieVStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -23,7 +23,8 @@ class DetailViewController: UIViewController {
         stackView.spacing = 5
         return stackView
     }()
-    private lazy var verticalStackView2: UIStackView = {
+    
+    private lazy var productionVStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -32,7 +33,7 @@ class DetailViewController: UIViewController {
         return stackView
     }()
     
-    private lazy var horizontalStackView: UIStackView = {
+    private lazy var movieHStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
@@ -82,11 +83,9 @@ class DetailViewController: UIViewController {
     private var collectionView: UICollectionView
     = {
         let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 250, height: 80)
+        let width = UIScreen.main.bounds.width
+        layout.itemSize = CGSize(width: width, height: (width/4))
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 1
-        layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.register(ProductionCell.self, forCellWithReuseIdentifier: ProductionCell.identifier)
@@ -103,53 +102,72 @@ class DetailViewController: UIViewController {
         return label
     }()
     
-    var originalTitle = String()
-    var overView = String()
-    var id = 0
-    var image = Data()
-    var isFavorite = Bool()
+    var movie = Movie()
     var productionCo = [ProductionCompany]()
+    var row: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("In the detail the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
+        if movie.isFavorite == true {
+            favoritesButton.backgroundColor = UIColor.gray
+            favoritesButton.setTitle("Remove from Favorites", for: .normal)
+        } else {
+            favoritesButton.setTitle("Add to Favorites", for: .normal)
+            favoritesButton.backgroundColor = UIColor.white
+        }
         collectionView.dataSource = self
         Binding()
         SetupUI()
     }
     @objc
     private func pressed() {
-        if isFavorite == false {
+        if movie.isFavorite == false {
+            favoritesButton.setTitle("Remove from Favorites", for: .normal)
             favoritesButton.backgroundColor = UIColor.gray
-         //   favoritesButton.setTitle("Remove from Favorites", for: .normal)
-            viewModel.setFavorite(id: id, title: originalTitle, overview: overView, image: image)
-            isFavorite = true
+            movie.isFavorite = true
+            viewModel.setIsfavorite(by: row, status: movie.isFavorite)
+           // movie.favoriteIndex = row
+            print("In the button the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
+            viewModel.setFavoriteMovie(id: movie.id, title: movie.originalTitle, overview: movie.overview, posterPath: movie.posterPath, isFavorite: movie.isFavorite)
         } else {
-//            favoritesButton.setTitle("Add to Favorites", for: .normal)
-//            favoritesButton.backgroundColor = UIColor.white
-//            isFavorite = false
+            favoritesButton.setTitle("Add to Favorites", for: .normal)
+            favoritesButton.backgroundColor = UIColor.white
+            movie.isFavorite = false
+            print("In the button the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
+      //      viewModel.setIsfavorite(by: -1, status: isFavorite)
+            viewModel.deleteFavoriteMovie(id: movie.id)
         }
     }
     
     private func SetupUI() {
         view.backgroundColor = .white
         
-        originalTitleLabel.text = originalTitle
-        overviewLabel.text = overView
-        movieImageView.image = UIImage(data: image)
-        navigationItem.title = originalTitle
+        self.navigationController?.navigationBar.topItem?.backButtonTitle = "Movie"
+        navigationItem.title = movie.originalTitle
+        
+        originalTitleLabel.text = movie.originalTitle
+        overviewLabel.text = movie.overview
+        viewModel.getImageData(movie.posterPath) { data in
+            DispatchQueue.global().async {
+                if let data = data {
+                    let image = UIImage(data: data)
+                    DispatchQueue.main.async {
+                        self.movieImageView.image = image  }
+        }   }   }
 
-        verticalStackView1.addArrangedSubview(originalTitleLabel)
-        verticalStackView1.addArrangedSubview(overviewLabel)
+        movieVStackView.addArrangedSubview(originalTitleLabel)
+        movieVStackView.addArrangedSubview(overviewLabel)
 
-        horizontalStackView.addArrangedSubview(movieImageView)
-        horizontalStackView.addArrangedSubview(verticalStackView1)
+        movieHStackView.addArrangedSubview(movieImageView)
+        movieHStackView.addArrangedSubview(movieVStackView)
 
-        verticalStackView2.addArrangedSubview(favoritesButton)
-        verticalStackView2.addArrangedSubview(productionTitleLabel)
-        verticalStackView2.addArrangedSubview(collectionView)
+        productionVStackView.addArrangedSubview(favoritesButton)
+        productionVStackView.addArrangedSubview(productionTitleLabel)
+        productionVStackView.addArrangedSubview(collectionView)
 
-        view.addSubview(horizontalStackView)
-        view.addSubview(verticalStackView2)
+        view.addSubview(movieHStackView)
+        view.addSubview(productionVStackView)
 
         //the stack constraints
         
@@ -183,7 +201,6 @@ class DetailViewController: UIViewController {
     }
     
     func Binding() {
-        print("Here: \(id)")
         viewModel
             .$companies
             .receive(on: RunLoop.main)
@@ -193,7 +210,7 @@ class DetailViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
-        viewModel.getProductionCompanies(id: id)
+        viewModel.getProductionCompanies(id: movie.id)
         print(productionCo.count)
     }
 }
@@ -208,7 +225,7 @@ extension DetailViewController: UICollectionViewDataSource {
          else {
             return UICollectionViewCell()  }
         let productionCo = viewModel.companies[indexPath.row].name
-        let image = viewModel.getProductionImageData(by: indexPath.row)
+        let image = "https://image.tmdb.org/t/p/original\(viewModel.companies[indexPath.row].logoPath)"
         cell.configureCell(productionCo: productionCo, imageData: image)
         return cell
     }

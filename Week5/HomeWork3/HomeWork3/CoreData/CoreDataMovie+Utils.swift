@@ -7,11 +7,16 @@
 
 import Foundation
 
+extension CoreDataMovie {
 
-func createMovie() /* -. movie */ {
+func CreateMovie() -> Movie {
     
-//    let id = Int(self.id)
-//    let originalTitle = orginalTitle ?? ""
-//    let overview = self.overview ?? ""
-//    return Movie(id: <#T##Int#>, originalTitle: <#T##String#>, overview: <#T##String#>, posterPath: <#T##String#>, title: <#T##String#>)
+    let id = Int(self.id)
+    let originalTitle = self.title ?? ""
+    let overview = self.overview ?? ""
+    let posterPath = self.posterPath ?? ""
+    
+    return Movie(id: id, originalTitle: originalTitle, overview: overview, posterPath: posterPath, isFavorite: false, favoriteIndex: -1)
+}
+
 }

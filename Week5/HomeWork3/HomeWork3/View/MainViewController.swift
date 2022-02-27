@@ -10,17 +10,15 @@ import Combine
 
 class MainViewController: UIViewController {
     
-    private let viewModel = ViewModel()
+    private let viewModel = ViewModel.shared
     private var cancellables = Set<AnyCancellable>()
     private let segments = ["Movie List", "Favorites"]
     var tableToDisplay = 0
-    var moviesList = [Movie]()
-    var favoriteStatus: [Bool] = [false]
-    var filteredMovies: [Movie]!
-    var customer = ""
+//    var moviesList = [Movie]()
+//    var filteredMovies: [Movie]!
+//    var user = ""
     var searching = false
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     
     
     private lazy var searchBar: UISearchBar = {
@@ -68,12 +66,12 @@ class MainViewController: UIViewController {
         
         navigationItem.hidesBackButton = true
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Hello: \(customer)",
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Hello: \(viewModel.getUser())",
                                                            style: UIBarButtonItem.Style.plain,
                                                                target: nil,
                                                                action: nil)
         navigationItem.rightBarButtonItem = self.editButtonItem
-        filteredMovies = viewModel.movies
+       // filteredMovies = viewModel.movies
         searchBar.delegate = self
         SetupUI()
         Binding()
@@ -95,6 +93,7 @@ class MainViewController: UIViewController {
         stackView.addArrangedSubview(segmentControl)
         stackView.addArrangedSubview(searchBar)
         stackView.addArrangedSubview(tableView)
+        
         
         view.addSubview(stackView)
         
@@ -154,17 +153,24 @@ extension MainViewController: UITableViewDataSource {
         else {
             return UITableViewCell() }
         if tableToDisplay == 0 {
-            let title = viewModel.getTitle(by: indexPath.row)
-            let overview = viewModel.getOverview(by: indexPath.row)
-            let image = viewModel.getMovieImageData(by: indexPath.row)
-            cell.configureCell(title: title, overview: overview, imageData: image)
+            var movie = Movie()
+            movie = viewModel.getMovie(by: indexPath.row)
+            let title = movie.originalTitle
+            let overview = movie.overview
+            let image = movie.posterPath
+            let favorite = viewModel.getFavorite(by: indexPath.row)
+            cell.configureCell(title: title, overview: overview, imageData: image, isFavorite: favorite)
         }
         else {
-                let title = viewModel.favoriteMovies[indexPath.row].originalTitle//favoriteMovieList[indexPath.row].originalTitle
-                let overview = viewModel.favoriteMovies[indexPath.row].overview
-                let image = viewModel.favoriteMovies[indexPath.row].posterPath
-                cell.configureCell(title: title, overview: overview, imageData: image)
+            var movie = FavoriteMovie(id: 0, orginalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
+            movie = viewModel.getfavoriteMovie(by: indexPath.row)
+            let title = movie.originalTitle
+            let overview = movie.overview
+            let image = movie.posterPath
+            let favorite = false
+            cell.configureCell(title: title, overview: overview, imageData: image, isFavorite: favorite)
              }
+        
 //        if seaeching {
 //
 //        }
@@ -173,19 +179,20 @@ extension MainViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let movieId = viewModel.getMovieId(by: indexPath.row)
+        let movie = viewModel.getMovie(by: indexPath.row)
+        print("in the main the index for \(movie.originalTitle) is set to: \(movie.isFavorite)")
         let detail = DetailViewController()
-        detail.originalTitle = viewModel.getTitle(by: indexPath.row)
-        detail.overView = viewModel.getOverview(by: indexPath.row)
-        detail.image = viewModel.getMovieImageData(by: indexPath.row)!
-        detail.id = movieId
-        for i in stride(from: 0, to: (filteredMovies.count-1), by: 1) {
-            if viewModel.favoriteMovies[i].id  == movieId {
-                detail.isFavorite = true
-            } else {
-                detail.isFavorite = false
-            }
-        }
+        detail.movie = movie
+        detail.row = indexPath.row
+     //   detail.isFavorite = movie.isFavorite
+     //   detail.isFavorite = viewModel.favoriteStatus[indexPath.row]
+//        for i in stride(from: 0, to: (filteredMovies.count-1), by: 1) {
+//            if viewModel.favoriteMovies[i].id  == movie.id {
+//                detail.isFavorite = true
+//            } else {
+//                detail.isFavorite = false
+//            }
+//        }
 //        detail.productionCo = viewModel.$companies
 //                                                    .receive(on: RunLoop.main)
 //                                                    .sink(receiveValue: {[weak self] name in
@@ -195,6 +202,7 @@ extension MainViewController: UITableViewDataSource {
         navigationController?.pushViewController(detail, animated: true)
 //        if detail.isFavorite == true {
 //        }
+        tableView.reloadData()
     }
 }
 
@@ -207,19 +215,19 @@ extension MainViewController: UITableViewDelegate {
 
 extension MainViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        moviesList = viewModel.movies
-        if searchText == "" {
-            filteredMovies = moviesList
-        } else {
-            for movie in moviesList {
-                if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
-                    filteredMovies.append(movie)
-                }
-            }
-        }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+//        moviesList = viewModel.movies
+//        if searchText == "" {
+//            filteredMovies = moviesList
+//        } else {
+//            for movie in moviesList {
+//                if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
+//                    filteredMovies.append(movie)
+//                }
+//            }
+//        }
+//        DispatchQueue.main.async {
+//            self.tableView.reloadData()
+//        }
     }
 }
 

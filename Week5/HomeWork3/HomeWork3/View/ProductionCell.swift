@@ -10,12 +10,12 @@ import UIKit
 class ProductionCell: UICollectionViewCell {
     
     static let identifier = "ProductionCell"
+    private let viewModel = ViewModel()
     
     private lazy var productionCoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
-      //  imageView.backgroundColor = .lightGray
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -38,11 +38,18 @@ class ProductionCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureCell(productionCo: String, imageData: Data?) {
+    func configureCell(productionCo: String, imageData: String?) {
         productionCoTitleLabel.text = productionCo
-        if let imageData = imageData {
-            let image = UIImage(data: imageData)
-            productionCoImageView.image = image
+        viewModel.getImageData(imageData!) { data in
+            DispatchQueue.global().async {
+                if let data = data {
+                    let image = UIImage(data: data)
+                    DispatchQueue.main.async {
+                        self.productionCoImageView.image = image
+                    }
+                }
+            }
+
         }
     }
     

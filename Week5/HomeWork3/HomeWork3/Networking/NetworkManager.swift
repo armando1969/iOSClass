@@ -10,7 +10,6 @@ import Foundation
 class NetworkManager {
     
     func getModel<Model: Codable>(_ type: Model.Type, from url: String, completion: @escaping (Result<Model, NetworkError>) -> ()) {
-        print(url)
         guard let url = URL(string: url) else {
             completion(.failure(.badURL))
             return }

@@ -8,17 +8,26 @@
 import Foundation
 
 struct Movie: Codable {
-    let id: Int
-    let originalTitle: String
-    let overview: String
-    let posterPath: String
-    let title: String
+    var id: Int = 0
+    var originalTitle: String = ""
+    var overview: String = ""
+    var posterPath: String = ""
+    var isFavorite: Bool = false
+    var favoriteIndex: Int = -1
 
     enum CodingKeys: String, CodingKey {
         case id
         case originalTitle = "original_title"
         case overview
         case posterPath = "poster_path"
-        case title
     }
+    
+//    init(id: Int, originalTitle: String, overview: String, posterPath: String, isFavorite: Bool, favoriteIndex: Int) {
+//        self.id = id
+//        self.originalTitle = originalTitle
+//        self.overview = overview
+//        self.posterPath = posterPath
+//        self.isFavorite = isFavorite
+//        self.favoriteIndex = favoriteIndex
+//    }
 }

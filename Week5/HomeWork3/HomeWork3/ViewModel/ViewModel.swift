@@ -13,13 +13,17 @@ import CoreData
 class ViewModel {
     
     private let networkManager = NetworkManager()
-    private var after = ""
     private var isLoading = false
     @Published private(set) var movies = [Movie]()
     @Published private(set) var companies = [ProductionCompany]()
-    @Published private(set) var images = [Data]()
-    var favoriteMovies = [FavoriteMovies]()
-    private var favoriteIndex = 0
+    @Published private(set) var favoriteMovie = FavoriteMovie(id: 0, orginalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
+    
+    var favoriteMovies = [FavoriteMovie?]()
+    private var movie = Movie()
+    private var user = ""
+    private var favoriteStatus = [Bool](repeating: false, count: 20)
+    var favIndex = 0
+    static let shared = ViewModel()
     
     func getMovies() {
         
@@ -37,11 +41,14 @@ class ViewModel {
     }
     
     func getProductionCompanies(id movieId: Int) {
+        
+        // I need to implement logic for if favorite has data
         networkManager
             .getModel(Production.self, from: "\(NetworkURL.baseProductionURL)\(movieId)?api_key=6622998c4ceac172a976a1136b204df4&language=en-US") { [weak self] result in
                 switch result {
                 case .success(let response):
                     self?.companies = response.productionCompanies.map {$0}
+                    self?.saveMovies()
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
@@ -50,18 +57,16 @@ class ViewModel {
     
     private func saveMovies() {
         let context = CoreDataManager.shared.mainContext
-        guard let entityDescription = NSEntityDescription.entity(forEntityName: "CoreDataMovie", in: context) else
-        {
-            return
-        }
+        guard let entity = NSEntityDescription.entity(forEntityName: "CoreDataMovie", in: context)
+        else {   return  }
         context.perform {
-            for movie in self.movies {
-                let CDMovie = CoreDataMovie(entity: entityDescription, insertInto: context)
-                CDMovie.id = Int64(movie.id)
-                CDMovie.title = movie.originalTitle
-                CDMovie.overview = movie.overview
-                CDMovie.posterPath = movie.posterPath
-                CDMovie.isFavorite = false
+            for movie in self.favoriteMovies {
+                let coreDataMovie = CoreDataMovie(entity: entity, insertInto: context)
+                coreDataMovie.id = Int64(movie!.id)
+                coreDataMovie.title = movie!.originalTitle
+                coreDataMovie.overview = movie!.overview
+                coreDataMovie.posterPath = movie!.posterPath
+                coreDataMovie.isFavorite = false
                 try? context.save()
             }
         }
@@ -71,63 +76,86 @@ class ViewModel {
 //        let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
 //        let context = CoreDataManager.shared.mainContext
 //        context.perform {
-//            let CoreDataMovies = try? context.fetch(request)
-//            
+//            let cDMovies = try? context.fetch(request)
+//            var newMovies = [Movie]()
 //        }
 //    }
     
     
-    func getTitle(by row: Int) -> String {
-        let movie = movies[row]
-        return movie.title.localizedCapitalized
-    }
     
-    func getOverview(by row: Int) -> String {
-        let movie = movies[row]
-        return movie.overview.localizedCapitalized
-    }
-    
-    func setFavorite(id: Int, title: String, overview: String, image: Data) {
-        favoriteMovies[favoriteIndex].id = id
-        favoriteMovies[favoriteIndex].originalTitle = title
-        favoriteMovies[favoriteIndex].overview = overview
-        favoriteMovies[favoriteIndex].posterPath = image
-        favoriteIndex += favoriteIndex
-        print(favoriteIndex)
-    }
-    
-    func getProductionCo(by row: Int) -> String {
-        let company = companies[row].name
-        return company
-    }
-    
-    func getMovieId(by row: Int) -> Int {
-        let movie = movies[row]
-        return movie.id
-    }
-//
-//    func getProductionCo(by id: Int) -> [ProductionCompany] {
-//        getProductionCompanies(id: id)
-//        return companies
-//    }
-//
-    func getProductionImageData(by row: Int) -> Data? {
-        let company = companies[row]
-        let path = "https://image.tmdb.org/t/p/original\(company.logoPath)"
+    func getImageData(_ path: String, completion: @escaping (Data?) -> Void)  {
         let url = URL(string: path)
-        if let data = try? Data(contentsOf: url!) {
-            return data
-        } else {
-            return nil }
+        DispatchQueue.global().async {
+            if let data = try? Data(contentsOf: url!) {
+                DispatchQueue.main.async {
+                    completion(data)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(nil) }
+        }   }
     }
     
-    func getMovieImageData(by row: Int) -> Data? {
-        let movie = movies[row]
-        let path = "https://image.tmdb.org/t/p/original\(movie.posterPath)"
-        let url = URL(string: path)
-        if let data = try? Data(contentsOf: url!) {
-            return data
-        } else {
-            return nil }
+    func getMovie(by row: Int) -> Movie {
+        let path = "https://image.tmdb.org/t/p/original\(movies[row].posterPath)"
+        movie.id = movies[row].id
+        movie.originalTitle = movies[row].originalTitle
+        movie.overview = movies[row].overview
+        movie.favoriteIndex = movies[row].favoriteIndex
+        movie.posterPath = path
+        movie.isFavorite = movies[row].isFavorite
+            return movie
+    }
+    
+    func getfavoriteMovie(by row: Int) -> FavoriteMovie {
+        let path = "https://image.tmdb.org/t/p/original\(favoriteMovies[row]!.posterPath ?? "")"
+        favoriteMovie.id = favoriteMovies[row]!.id
+        favoriteMovie.originalTitle = favoriteMovies[row]!.originalTitle
+        favoriteMovie.overview = favoriteMovies[row]!.overview
+        favoriteMovie.posterPath = path
+        favoriteMovie.isFavorite = movies[row].isFavorite
+        print("in the VM the index for \(movies[row].originalTitle) is set to: \(movies[row].isFavorite)")
+            return favoriteMovie
+    }
+    
+    func setFavoriteMovie(id: Int, title: String, overview: String, posterPath: String, isFavorite: Bool) {
+        print("in the Set the index for \(title) is set to: \(isFavorite)")
+        favoriteMovie.id = id
+        favoriteMovie.originalTitle = title
+        favoriteMovie.overview = overview
+        favoriteMovie.posterPath = posterPath
+        for i in 0...(movies.count-1) {
+            if movies[i].id == id {
+                movies[i].isFavorite = isFavorite
+            }
+        }
+        favoriteMovies.append(favoriteMovie)
+    }
+    
+    func setUser(user: String) {
+        self.user = user
+    }
+    
+    func getUser() -> String {
+        return user
+    }
+    
+    func setIsfavorite(by row: Int, status: Bool) {
+        movies[row].favoriteIndex = favIndex
+        favIndex += 1
+        favoriteStatus[row] = status
+        //print("the index \(movies[row].originalTitle) is set to: \(movies[row].favoriteIndex)")
+    }
+    
+    func getFavorite(by row: Int) -> Bool {
+        return favoriteStatus[row]
+    }
+    
+    func deleteFavoriteMovie(id: Int) {
+        for i in 0...(favoriteMovies.count-1) {
+//            print(i)
+//        print("and we removed\(favoriteMovies[i]!.originalTitle) at: \(i)")
+        favoriteMovies.remove(at: i)
+        }
     }
 }
