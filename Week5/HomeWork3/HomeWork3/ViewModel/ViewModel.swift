@@ -124,15 +124,11 @@ class ViewModel {
     func getFavoriteMovies() {
         let currentMovies = getAllFavoriteCDMovies()
         favoriteMovies = currentMovies
-        if favoriteMovies.count != 0 {
-            for favMovies in favoriteMovies {
-                for var movie in movies {
-                    if favMovies?.id == movie.id {
-                 //       print(favMovies?.originalTitle)
-                        print(movie.originalTitle)
-                        movie.favoriteIndex = favMovies!.favoriteIndex
-                        movie.isFavorite = true
-                    }
+        for favMovies in favoriteMovies {
+            for i in 0...(movies.count-1) {
+                if favMovies?.id == movies[i].id {
+                movies[i].favoriteIndex = favMovies!.favoriteIndex
+                movies[i].isFavorite = true
                 }
             }
         }
@@ -145,7 +141,6 @@ class ViewModel {
         context.perform {
             for movie in self.movies {
                 if movie.favoriteIndex != -1 {
-                    print(movie.originalTitle)
                     let coreDataFavoriteMovie = CoreDataMovie(entity: entity, insertInto: context)
                     coreDataFavoriteMovie.id = Int64(movie.id)
                     coreDataFavoriteMovie.title = movie.originalTitle

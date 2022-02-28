@@ -134,6 +134,7 @@ class DetailViewController: UIViewController {
             favoritesButton.backgroundColor = UIColor.white
             movie.isFavorite = false
             viewModel.deleteFavoriteMovie(id: movie.id)
+            viewModel.saveFavoriteMovies()
         }
     }
     
