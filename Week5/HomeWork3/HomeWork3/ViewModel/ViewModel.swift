@@ -34,7 +34,8 @@ class ViewModel {
         let time = currentTime - cacheTime
         if time >= 60 * 60 * 24 {
             forceUpdate = true  }
-                if currentMovies.isEmpty || forceUpdate {
+        
+        if currentMovies.isEmpty || forceUpdate {
         cleanMovies()
         networkManager
             .getModel(MovieList.self, from: NetworkURL.baseMovieURL) { [weak self] result in
@@ -130,15 +131,16 @@ class ViewModel {
         guard let entity = NSEntityDescription.entity(forEntityName: "CoreDataFavoriteMovies", in: context)
         else {   return  }
         context.perform {
-            for movie in self.favoriteMovies {
-                if movie!.favoriteIndex != -1 {
-                let coreDataFavoriteMovie = CoreDataMovie(entity: entity, insertInto: context)
-                coreDataFavoriteMovie.id = Int64(movie!.id)
-                coreDataFavoriteMovie.title = movie!.originalTitle
-                coreDataFavoriteMovie.overview = movie!.overview
-                coreDataFavoriteMovie.posterPath = movie!.posterPath
-                coreDataFavoriteMovie.favoriteIndex = Int64(movie!.favoriteIndex)
-                try? context.save()
+            for movie in self.movies {
+                if movie.favoriteIndex != -1 {
+                    print(movie.originalTitle)
+                    let coreDataFavoriteMovie = CoreDataMovie(entity: entity, insertInto: context)
+                    coreDataFavoriteMovie.id = Int64(movie.id)
+                    coreDataFavoriteMovie.title = movie.originalTitle
+                    coreDataFavoriteMovie.overview = movie.overview
+                    coreDataFavoriteMovie.posterPath = movie.posterPath
+                    coreDataFavoriteMovie.favoriteIndex = Int64(movie.favoriteIndex)
+                    try? context.save()
                 }
             }
         }
