@@ -15,7 +15,6 @@ class MainViewController: UIViewController {
     private let segments = ["Movie List", "Favorites"]
     var tableToDisplay = 0
     var moviesList = [Movie]()
-    var filteredMovies: [Movie]!
     var searching = false
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
@@ -72,15 +71,12 @@ class MainViewController: UIViewController {
                                                                target: nil,
                                                                action: nil)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(edit))
-       // filteredMovies = viewModel.movies
-        searchBar.delegate = self
-        SetupUI()
-        Binding()
+        setupUI()
+        binding()
     }
     
     @objc
     private func edit() {
-        print("here")
         let alert = UIAlertController(title: "Edit", message: "Edit Your Name Here", preferredStyle: .alert)
         alert.addTextField { (textField) in
             textField.attributedPlaceholder = NSAttributedString(
@@ -98,18 +94,10 @@ class MainViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-//    private func fetchMovies() {
-////        do {
-////            try <#throwing expression#>
-////        } catch <#pattern#> {
-////            <#statements#>
-////        }
-//
-//    }
-    
-    private func SetupUI() {
+    private func setupUI() {
         
         view.backgroundColor = .white
+        searchBar.delegate = self
         
         stackView.addArrangedSubview(segmentControl)
         stackView.addArrangedSubview(searchBar)
@@ -130,7 +118,7 @@ class MainViewController: UIViewController {
         tableView.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20).isActive = true
     }
 
-    func Binding() {
+    func binding() {
         viewModel
             .$movies
             .receive(on: RunLoop.main)
@@ -140,6 +128,7 @@ class MainViewController: UIViewController {
             }
             .store(in: &cancellables)
         viewModel.getMovies()
+        viewModel.getFavoriteMovies()
     }
     
     @objc fileprivate func switchSegment(_ sender: UISegmentedControl) {
@@ -169,7 +158,7 @@ extension MainViewController: UITableViewDataSource {
         else {
             return UITableViewCell() }
         if tableToDisplay == 0 {
-            var movie = Movie()
+            var movie = Movie(id: 0, originalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
             movie = viewModel.getMovie(by: indexPath.row)
             let title = movie.originalTitle
             let overview = movie.overview
@@ -186,10 +175,6 @@ extension MainViewController: UITableViewDataSource {
             let favorite = false
             cell.configureCell(title: title, overview: overview, imageData: image, isFavorite: favorite)
              }
-        
-//        if seaeching {
-//
-//        }
         return cell
     }
     
@@ -199,24 +184,7 @@ extension MainViewController: UITableViewDataSource {
         let detail = DetailViewController()
         detail.movie = movie
         detail.row = indexPath.row
-     //   detail.isFavorite = movie.isFavorite
-     //   detail.isFavorite = viewModel.favoriteStatus[indexPath.row]
-//        for i in stride(from: 0, to: (filteredMovies.count-1), by: 1) {
-//            if viewModel.favoriteMovies[i].id  == movie.id {
-//                detail.isFavorite = true
-//            } else {
-//                detail.isFavorite = false
-//            }
-//        }
-//        detail.productionCo = viewModel.$companies
-//                                                    .receive(on: RunLoop.main)
-//                                                    .sink(receiveValue: {[weak self] name in
-//                                                        return name
-//                                                    }).store(in: &cancellables)
-//            self.viewModel.getProductionCompanies(id: movieId)
         navigationController?.pushViewController(detail, animated: true)
-//        if detail.isFavorite == true {
-//        }
         tableView.reloadData()
     }
 }
@@ -229,21 +197,8 @@ extension MainViewController: UITableViewDelegate {
 }
 
 extension MainViewController: UISearchBarDelegate {
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        moviesList = viewModel.movies
-//        if searchText == "" {
-//            filteredMovies = moviesList
-//        } else {
-//            for movie in moviesList {
-//                if movie.originalTitle.lowercased().contains(searchText.lowercased()) {
-//                    filteredMovies.append(movie)
-//                }
-//                print(filteredMovies.count)
-//            }
-//        }
-//        DispatchQueue.main.async {
-//            self.tableView.reloadData()
-//        }
-//    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        viewModel.filterMovies(searchText: searchText)
+    }
 }
 

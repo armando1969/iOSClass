@@ -1,14 +1,15 @@
 //
-//  CoreDataMovie+Utils.swift
+//  CoreDataFavoriteMovies+Utils.swift
 //  HomeWork3
 //
-//  Created by Consultant on 2/22/22.
+//  Created by Consultant on 2/27/22.
 //
 
 import Foundation
 
-extension CoreDataMovie {
 
+extension CoreDataFavoriteMovies {
+    
 func createMovie() -> Movie {
     
     let id = Int(self.id)

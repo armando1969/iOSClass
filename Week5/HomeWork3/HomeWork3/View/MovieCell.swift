@@ -83,17 +83,6 @@ class MovieCell: UITableViewCell {
         return label
     }()
     
-//    private let detailButton: UIButton = {
-//        let favoriteButton = UIButton()
-//        favoriteButton.translatesAutoresizingMaskIntoConstraints = false
-//        favoriteButton.isHidden = true
-//        favoriteButton.setTitle("Show Details", for: .normal)
-//        favoriteButton.titleLabel?.font = UIFont(name: "Arial", size: 15)
-//        favoriteButton.addTarget(self, action: #selector(pressed), for: .touchUpInside)
-//        favoriteButton.setTitleColor(UIColor.blue, for: .normal)
-//        return favoriteButton
-//    }()
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setUpUI()
@@ -101,21 +90,6 @@ class MovieCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    @objc
-    private func pressed() {
-//        if movie.isFavorite == false {
-//            favoritesButton.backgroundColor = UIColor.gray
-//            favoritesButton.setTitle("Remove from Favorites", for: .normal)
-//            movie.isFavorite = true
-//            viewModel.setFavoriteMovie(id: movie.id, title: movie.originalTitle, overview: movie.overview, isFavorite: movie.isFavorite)
-//        } else {
-//            favoritesButton.setTitle("Add to Favorites", for: .normal)
-//            favoritesButton.backgroundColor = UIColor.white
-//            movie.isFavorite = false
-//            viewModel.deleteFavoriteMovie(id: movie.id)
-//        }
     }
     
     func configureCell(title: String, overview: String, imageData: String!, isFavorite: Bool) {

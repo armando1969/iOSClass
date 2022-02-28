@@ -102,7 +102,7 @@ class DetailViewController: UIViewController {
         return label
     }()
     
-    var movie = Movie()
+    var movie = Movie(id: 0, originalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
     var productionCo = [ProductionCompany]()
     var row: Int = 0
     
@@ -116,8 +116,8 @@ class DetailViewController: UIViewController {
             favoritesButton.backgroundColor = UIColor.white
         }
         collectionView.dataSource = self
-        Binding()
-        SetupUI()
+        binding()
+        setupUI()
     }
     @objc
     private func pressed() {
@@ -134,7 +134,7 @@ class DetailViewController: UIViewController {
         }
     }
     
-    private func SetupUI() {
+    private func setupUI() {
         view.backgroundColor = .white
         
         self.navigationController?.navigationBar.topItem?.backButtonTitle = "Movie"
@@ -194,7 +194,7 @@ class DetailViewController: UIViewController {
         collectionView.heightAnchor.constraint(equalToConstant: 150).isActive = true
     }
     
-    func Binding() {
+    func binding() {
         viewModel
             .$companies
             .receive(on: RunLoop.main)

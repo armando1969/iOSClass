@@ -22,12 +22,12 @@ struct Movie: Codable {
         case posterPath = "poster_path"
     }
     
-//    init(id: Int, originalTitle: String, overview: String, posterPath: String, isFavorite: Bool, favoriteIndex: Int) {
-//        self.id = id
-//        self.originalTitle = originalTitle
-//        self.overview = overview
-//        self.posterPath = posterPath
-//        self.isFavorite = isFavorite
-//        self.favoriteIndex = favoriteIndex
-//    }
+    init(id: Int, originalTitle: String, overview: String, posterPath: String, isFavorite: Bool, favoriteIndex: Int) {
+        self.id = id
+        self.originalTitle = originalTitle
+        self.overview = overview
+        self.posterPath = posterPath
+        self.isFavorite = isFavorite
+        self.favoriteIndex = favoriteIndex
+    }
 }

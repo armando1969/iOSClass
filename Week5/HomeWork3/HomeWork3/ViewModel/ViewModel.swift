@@ -19,47 +19,64 @@ class ViewModel {
     @Published private(set) var favoriteMovie = FavoriteMovie(id: 0, originalTitle: "", overview: "", posterPath: "", favoriteIndex: -1)
     
     var favoriteMovies = [FavoriteMovie?]()
-    private var movie = Movie()
+    private var movie = Movie(id: 0, originalTitle: "", overview: "", posterPath: "", isFavorite: false, favoriteIndex: -1)
     private var user = ""
     private var favoriteStatus = [Bool](repeating: false, count: 20)
     var favIndex = 0
     static let shared = ViewModel()
     
     func getMovies() {
+        let currentMovies = getAllCDMovies()
         
+        var forceUpdate = false
+        let cacheTime = UserDefaults.standard.double(forKey: "cacheTime")
+        let currentTime = Date().timeIntervalSince1970
+        let time = currentTime - cacheTime
+        if time >= 60 * 60 * 24 {
+            forceUpdate = true  }
         
+        if currentMovies.isEmpty || forceUpdate {
+        cleanMovies()
         networkManager
             .getModel(MovieList.self, from: NetworkURL.baseMovieURL) { [weak self] result in
                 switch result {
                 case .success(let response):
                     self?.movies = response.results.map { $0 }
                     self?.saveMovies()
+                    UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: "cacheTime")
+                    UserDefaults.standard.synchronize()
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
+        }  else {
+            movies = currentMovies
+        } 
+    }
+    
+    private func cleanMovies() {
+//        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "CoreDataMovie")
+//        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//        let context = CoreDataManager.shared.mainContext
+//        let persistenceCordinator = NSPersistentStoreCoordinator.self
+//        do {
+//            try persistenceCordinator.execute(deleteRequest, with: context)
+//            } catch let error as NSError {
+//                    print(error)
+//                }
     }
     
     func getProductionCompanies(id movieId: Int) {
-        
-        // I need to implement logic for if favorite has data
-        
-//        let currentMovies = getAllCDMovies()
-//
-//        if currentMovies.isEmpty {
+    
         networkManager
             .getModel(Production.self, from: "\(NetworkURL.baseProductionURL)\(movieId)?api_key=6622998c4ceac172a976a1136b204df4&language=en-US") { [weak self] result in
                 switch result {
                 case .success(let response):
                     self?.companies = response.productionCompanies.map {$0}
-                    self?.saveMovies()
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
-//        } else {
-//            movies = currentMovies
-//        }
     }
     
     private func saveMovies() {
@@ -67,27 +84,28 @@ class ViewModel {
         guard let entity = NSEntityDescription.entity(forEntityName: "CoreDataMovie", in: context)
         else {   return  }
         context.perform {
-            for movie in self.favoriteMovies {
+            for movie in self.movies {
                 let coreDataMovie = CoreDataMovie(entity: entity, insertInto: context)
-                coreDataMovie.id = Int64(movie!.id)
-                coreDataMovie.title = movie!.originalTitle
-                coreDataMovie.overview = movie!.overview
-                coreDataMovie.posterPath = movie!.posterPath
-                coreDataMovie.isFavorite = false
+                coreDataMovie.id = Int64(movie.id)
+                coreDataMovie.title = movie.originalTitle
+                coreDataMovie.overview = movie.overview
+                coreDataMovie.posterPath = movie.posterPath
+                coreDataMovie.isFavorite = movie.isFavorite
+                coreDataMovie.favoriteIndex = Int64(movie.favoriteIndex)
                 try? context.save()
             }
         }
     }
     
-    private func getAllCDMovies() -> [FavoriteMovie] {
+    private func getAllCDMovies() -> [Movie] {
         let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
         let context = CoreDataManager.shared.mainContext
-        var newMovies = [FavoriteMovie]()
+        var newMovies = [Movie]()
             //alternatively you could use the map operator
         context.performAndWait {
             let cDMovies = try? context.fetch(request)
             for cDMovie in (cDMovies ?? []) {
-                let tempMovie = cDMovie.CreateMovie()
+                let tempMovie = cDMovie.createMovie()
                 newMovies.append(tempMovie)
             }
         }
@@ -118,6 +136,19 @@ class ViewModel {
             return movie
     }
     
+    func getFavoriteMovies() {
+        for movie in movies {
+//            if movie.favoriteIndex != 0 {
+//                favoriteMovie.id = movie.id
+//                favoriteMovie.originalTitle = movie.originalTitle
+//                favoriteMovie.overview = movie.overview
+//                favoriteMovie.posterPath = movie.posterPath
+//                favoriteMovies.append(favoriteMovie)
+//            }
+            print(movie.favoriteIndex)
+        }
+    }
+    
     func getfavoriteMovie(by row: Int) -> FavoriteMovie {
         
         let path = "https://image.tmdb.org/t/p/original\(favoriteMovies[row]!.posterPath)"
@@ -128,17 +159,39 @@ class ViewModel {
         return favoriteMovie
     }
     
+    func filterMovies(searchText: String) {
+        
+        if searchText.isEmpty {
+            movies = getAllCDMovies()
+            return
+        }
+        
+        let request: NSFetchRequest<CoreDataMovie> = CoreDataMovie.fetchRequest()
+        let predicateTitle = NSPredicate(format: "title CONTAINS[c] %@", searchText)
+        let predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateTitle])
+        request.predicate = predicate
+        
+        let context = CoreDataManager.shared.mainContext
+            
+        context.performAndWait { [weak self] in
+            if let cDMovies = try? context.fetch(request) {
+                let moviesFiltered = cDMovies.map { $0.createMovie() }
+                self?.movies = moviesFiltered
+            }
+        }
+    }
+    
     func setFavoriteMovie(id: Int, title: String, overview: String, posterPath: String, isFavorite: Bool) {
         favoriteMovie.id = id
         favoriteMovie.originalTitle = title
         favoriteMovie.overview = overview
         favoriteMovie.posterPath = posterPath
-        for i in 0...(movies.count-1) {
-            if movies[i].id == id {
+        for i in 0...19 {
+            if movies[i].id == id  {
                 movies[i].isFavorite = isFavorite
                 movies[i].favoriteIndex = favIndex
                 favoriteStatus[i] = isFavorite
-            }
+                }
         }
         favIndex += 1
         favoriteMovies.append(favoriteMovie)
@@ -157,7 +210,7 @@ class ViewModel {
     }
     
     func deleteFavoriteMovie(id: Int) {
-        for j in 0...(movies.count-1) {
+        for j in 0...19 {
             if movies[j].id == id {
                 movies[j].isFavorite = false
                 movies[j].favoriteIndex = -1
