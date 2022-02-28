@@ -12,7 +12,6 @@ struct FavoriteMovie: Codable {
     var originalTitle: String
     var overview: String
     var posterPath: String
-   // var isFavorite: Bool
     var favoriteIndex: Int
     
     init(id: Int, originalTitle: String, overview: String, posterPath: String, /*isFavorite: Bool,*/ favoriteIndex: Int) {

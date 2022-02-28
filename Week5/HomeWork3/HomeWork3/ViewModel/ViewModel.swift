@@ -124,6 +124,18 @@ class ViewModel {
     func getFavoriteMovies() {
         let currentMovies = getAllFavoriteCDMovies()
         favoriteMovies = currentMovies
+        if favoriteMovies.count != 0 {
+            for favMovies in favoriteMovies {
+                for var movie in movies {
+                    if favMovies?.id == movie.id {
+                 //       print(favMovies?.originalTitle)
+                        print(movie.originalTitle)
+                        movie.favoriteIndex = favMovies!.favoriteIndex
+                        movie.isFavorite = true
+                    }
+                }
+            }
+        }
     }
     
     func saveFavoriteMovies() {
@@ -139,9 +151,8 @@ class ViewModel {
                     coreDataFavoriteMovie.title = movie.originalTitle
                     coreDataFavoriteMovie.overview = movie.overview
                     coreDataFavoriteMovie.posterPath = movie.posterPath
-                    coreDataFavoriteMovie.favoriteIndex = Int64(movie.favoriteIndex)
-                    try? context.save()
-                }
+                    coreDataFavoriteMovie.favoriteIndex = Int64(movie.favoriteIndex) }
+                try? context.save()
             }
         }
     }
